@@ -5,16 +5,16 @@
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFDF7",
-  "theme_color": "#5BA4E5",
+  "background_color": "#FFFBF0",
+  "theme_color": "#3B8BCC",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%235BA4E5'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle' fill='white'%3E🐰%3C/text%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%233B8BCC'/%3E%3Cellipse cx='64' cy='48' rx='13' ry='36' fill='white' stroke='%232C2C2C' stroke-width='5'/%3E%3Cellipse cx='128' cy='48' rx='13' ry='36' fill='white' stroke='%232C2C2C' stroke-width='5'/%3E%3Cellipse cx='96' cy='116' rx='54' ry='50' fill='white' stroke='%232C2C2C' stroke-width='5'/%3E%3Ccircle cx='76' cy='106' r='5' fill='%232C2C2C'/%3E%3Ccircle cx='116' cy='106' r='5' fill='%232C2C2C'/%3E%3Cpath d='M88 130 L104 130 M96 122 L96 138' stroke='%232C2C2C' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E",
       "sizes": "192x192",
       "type": "image/svg+xml"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%235BA4E5'/%3E%3Ctext x='256' y='350' font-size='260' text-anchor='middle' fill='white'%3E🐰%3C/text%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%233B8BCC'/%3E%3Cellipse cx='170' cy='128' rx='34' ry='96' fill='white' stroke='%232C2C2C' stroke-width='13'/%3E%3Cellipse cx='342' cy='128' rx='34' ry='96' fill='white' stroke='%232C2C2C' stroke-width='13'/%3E%3Cellipse cx='256' cy='310' rx='144' ry='133' fill='white' stroke='%232C2C2C' stroke-width='13'/%3E%3Ccircle cx='203' cy='283' r='13' fill='%232C2C2C'/%3E%3Ccircle cx='309' cy='283' r='13' fill='%232C2C2C'/%3E%3Cpath d='M234 347 L278 347 M256 325 L256 369' stroke='%232C2C2C' stroke-width='11' stroke-linecap='round' fill='none'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
