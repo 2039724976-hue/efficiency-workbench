@@ -98,13 +98,13 @@ input, textarea, button, select { font-family: inherit; font-size: var(--font-ba
 /* 米菲耳朵装饰 - tab栏左上角 */
 .tab-bar::before {
   content: ''; position: absolute; top: -2px; right: 12px;
-  width: 28px; height: 16px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 30'%3E%3Cellipse cx='14' cy='12' rx='5' ry='14' fill='white' stroke='%232C2C2C' stroke-width='2.5'/%3E%3Cellipse cx='36' cy='12' rx='5' ry='14' fill='white' stroke='%232C2C2C' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat center / contain;
+  width: 28px; height: 22px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 40'%3E%3Cpath d='M16 2 Q14 0 19 0 Q23 1 23 30 L19 30 Q17 4 16 2 Z' fill='white' stroke='%232C2C2C' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cpath d='M34 2 Q36 0 31 0 Q27 1 27 30 L31 30 Q33 4 34 2 Z' fill='white' stroke='%232C2C2C' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cellipse cx='25' cy='30' rx='14' ry='10' fill='white' stroke='%232C2C2C' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat center / contain;
   opacity: 0.5; pointer-events: none;
 }
 .tab-logo {
   flex-shrink: 0; width: 36px; height: 40px; margin-left: 6px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cellipse cx='33' cy='22' rx='7' ry='20' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Cellipse cx='67' cy='22' rx='7' ry='20' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Cellipse cx='50' cy='62' rx='30' ry='28' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Ccircle cx='39' cy='57' r='2.8' fill='%232C2C2C'/%3E%3Ccircle cx='61' cy='57' r='2.8' fill='%232C2C2C'/%3E%3Cpath d='M47 70 L53 70 M50 67 L50 73' stroke='%232C2C2C' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") no-repeat center / contain;
+  background: var(--miffy-face) no-repeat center / contain;
 }
 .tab-scroll { display: flex; align-items: center; height: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0 8px; }
 .tab-scroll::-webkit-scrollbar { display: none; }
@@ -502,18 +502,61 @@ textarea.input-field { min-height: 100px; resize: vertical; line-height: 1.6; }
 .why-source { font-size: 12px; color: var(--text-light); margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.06); }
 .why-source a { color: var(--miffy-blue); text-decoration: none; }
 
-/* ===== Loading - 米菲跳跃动画 ===== */
+/* ===== Loading - 米菲跳跃动画 (Dick Bruna 极简几何风) ===== */
+:root {
+  --miffy-face: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cpath d='M30 8 Q28 4 35 4 Q42 6 42 52 L36 52 Q34 12 30 8 Z' fill='white' stroke='%232C2C2C' stroke-width='3' stroke-linejoin='round'/%3E%3Cpath d='M70 8 Q72 4 65 4 Q58 6 58 52 L64 52 Q66 12 70 8 Z' fill='white' stroke='%232C2C2C' stroke-width='3' stroke-linejoin='round'/%3E%3Cellipse cx='50' cy='72' rx='32' ry='30' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Ccircle cx='38' cy='68' r='3' fill='%232C2C2C'/%3E%3Ccircle cx='62' cy='68' r='3' fill='%232C2C2C'/%3E%3Cpath d='M44 84 L56 84 M50 78 L50 90' stroke='%232C2C2C' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  --miffy-full: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 130'%3E%3Cpath d='M32 6 Q29 1 36 1 Q42 3 42 48 L36 48 Q33 10 32 6 Z' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Cpath d='M68 6 Q71 1 64 1 Q58 3 58 48 L64 48 Q67 10 68 6 Z' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Cellipse cx='50' cy='64' rx='28' ry='26' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Ccircle cx='40' cy='60' r='2.5' fill='%232C2C2C'/%3E%3Ccircle cx='60' cy='60' r='2.5' fill='%232C2C2C'/%3E%3Cpath d='M44 74 L56 74 M50 68 L50 80' stroke='%232C2C2C' stroke-width='2.8' stroke-linecap='round'/%3E%3Cpath d='M22 92 Q22 86 30 86 L70 86 Q78 86 78 92 L78 116 Q78 122 70 122 L30 122 Q22 122 22 116 Z' fill='%23F5C518' stroke='%232C2C2C' stroke-width='3' stroke-linejoin='round'/%3E%3Crect x='38' y='122' width='8' height='6' fill='white' stroke='%232C2C2C' stroke-width='2.5'/%3E%3Crect x='54' y='122' width='8' height='6' fill='white' stroke='%232C2C2C' stroke-width='2.5'/%3E%3C/svg%3E");
+}
 .loading-state { text-align: center; padding: 40px 20px; }
+@keyframes miffyHop {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  30% { transform: translateY(-14px) rotate(-6deg); }
+  60% { transform: translateY(-4px) rotate(4deg); }
+}
+@keyframes miffyBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.1); }
+}
 .loading-state .loading-icon {
-  width: 60px; height: 66px; margin: 0 auto 16px; display: inline-block;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 110'%3E%3Cellipse cx='33' cy='22' rx='7' ry='20' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Cellipse cx='67' cy='22' rx='7' ry='20' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Cellipse cx='50' cy='62' rx='30' ry='28' fill='white' stroke='%232C2C2C' stroke-width='3'/%3E%3Ccircle cx='39' cy='57' r='2.8' fill='%232C2C2C'/%3E%3Ccircle cx='61' cy='57' r='2.8' fill='%232C2C2C'/%3E%3Cpath d='M47 70 L53 70 M50 67 L50 73' stroke='%232C2C2C' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") no-repeat center / contain;
+  width: 70px; height: 77px; margin: 0 auto 14px; display: inline-block;
+  background: var(--miffy-full) no-repeat center / contain;
   animation: miffyHop 0.8s ease-in-out infinite;
   font-size: 0; color: transparent;
 }
-@keyframes miffyHop {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  30% { transform: translateY(-12px) rotate(-5deg); }
-  60% { transform: translateY(-4px) rotate(3deg); }
+.empty-state .empty-icon {
+  width: 96px; height: 106px; margin: 0 auto 16px;
+  background: var(--miffy-face) no-repeat center / contain;
+  animation: miffyBlink 4s ease-in-out infinite;
+  font-size: 0; color: transparent;
+}
+/* 米菲耳饰 - tab栏左上角 */
+.miffy-corner-ear {
+  position: absolute; top: -2px; left: 4px;
+  width: 22px; height: 26px;
+  background: var(--miffy-face) no-repeat center / contain;
+  background-position: -15px -2px;
+  background-size: 110px 121px;
+  pointer-events: none; opacity: 0.7;
+  animation: miffyBlink 4s ease-in-out infinite;
+}
+/* tab栏右上角的米菲头像 */
+.miffy-corner-head {
+  position: absolute; top: 4px; right: 6px;
+  width: 18px; height: 20px;
+  background: var(--miffy-face) no-repeat center / contain;
+  background-size: 70px 77px;
+  background-position: center 5px;
+  pointer-events: none; opacity: 0.6;
+  animation: miffyBlink 5s ease-in-out infinite 1s;
+}
+/* 日期卡右下角米菲水印 */
+.miffy-watermark {
+  position: absolute; right: 6px; bottom: 6px;
+  width: 28px; height: 31px;
+  background: var(--miffy-face) no-repeat center / contain;
+  background-position: center 3px;
+  background-size: 60px 66px;
+  opacity: 0.15; pointer-events: none;
 }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
