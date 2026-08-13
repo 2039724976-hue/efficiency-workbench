@@ -6,14 +6,12 @@ var App = {
   windows: [
     { id: 'dailyPlan', icon: '\u{1F4CB}', label: '\u6BCF\u65E5\u8BA1\u5212', group: 'left' },
     { id: 'workHours', icon: '\u23F0', label: '\u5DE5\u65F6\u7EDF\u8BA1', group: 'rightTop' },
-    { id: 'expenseForm', icon: '\u{1F9FE}', label: '\u62A5\u9500\u8868\u683C', group: 'rightTop' },
     { id: 'news', icon: '\u{1F4F0}', label: '\u65F6\u653F\u70ED\u70B9', group: 'rightTop' },
     { id: 'english', icon: '\u{1F524}', label: '\u82F1\u8BED\u5B66\u4E60', group: 'rightTop' },
     { id: 'historyToday', icon: '\u{1F4DC}', label: '历史今天', group: 'rightTop' },
     { id: 'reading', icon: '\u{1F4DA}', label: '\u8BFB\u4E66\u8BB0\u5F55', group: 'rightBottom' },
     { id: 'exercise', icon: '\u{1F4AA}', label: '\u8FD0\u52A8\u953B\u70BC', group: 'rightBottom' },
     { id: 'inspiration', icon: '\u{1F4A1}', label: '\u6BCF\u65E5\u7075\u611F', group: 'rightBottom' },
-    { id: 'review', icon: '\u{1F504}', label: '\u5185\u5BB9\u590D\u76D8', group: 'rightBottom' },
     { id: 'dailyWhy', icon: '❓', label: '每天为什么', group: 'rightBottom' }
   ],
   init: function() {
@@ -97,13 +95,13 @@ var App = {
     switch (id) {
       case 'dailyPlan': return this.renderDailyPlan();
       case 'workHours': return this.renderWorkHours();
-      case 'expenseForm': return this.renderExpenseForm();
+
       case 'news': return this.renderNews();
       case 'english': return this.renderEnglish();
       case 'reading': return this.renderReading();
       case 'exercise': return this.renderExercise();
       case 'inspiration': return this.renderInspiration();
-      case 'review': return this.renderReview();
+
       case 'historyToday': return this.renderHistoryToday();
       case 'dailyWhy': return this.renderDailyWhy();
       default: return '<div class="empty-state"><div class="empty-icon">\u{1F430}</div><div class="empty-text">\u5F00\u53D1\u4E2D</div></div>';
@@ -374,7 +372,6 @@ var App = {
     h += '<b style="color:#5BA4E5;">\u8BA1\u5212\u6307\u4EE4</b><br>';
     h += '/今日规划 \u2014 \u6253\u5F00\u4ECA\u65E5\u8BA1\u5212\u89C6\u56FE<br>';
     h += '/顺延待办 \u2014 \u624B\u52A8\u89E6\u53D1\u987A\u5EF6\u903B\u8F91<br>';
-    h += '/同步复盘 \u2014 \u590D\u5236\u4ECA\u65E5\u5F85\u529E\u5230\u5185\u5BB9\u590D\u76D8<br>';
     h += '/新增任务 [标题] \u2014 \u5FEB\u901F\u65B0\u589E\u4ECA\u65E5\u5F85\u529E<br>';
     h += '/清空已完成 \u2014 \u6E05\u9664\u4ECA\u65E5\u5DF2\u5B8C\u6210\u4EFB\u52A1<br><br>';
     h += '<b style="color:#FF9AA2;">\u5DE5\u65F6\u6307\u4EE4</b><br>';
@@ -439,10 +436,6 @@ var App = {
       } catch (e) {
         return '\u26A0\uFE0F \u987A\u5EF6\u5931\u8D25: ' + e.message;
       }
-    }
-    if (type === '/\u540C\u6B65\u590D\u76D8') {
-      var snap = Storage.pushToContentReview(Storage.today());
-      return '\u2705 \u5DF2\u540C\u6B65' + snap.todayTodos.length + '\u6761\u5F85\u529E\u5230\u5185\u5BB9\u590D\u76D8';
     }
     if (type === '/\u65B0\u589E\u4EFB\u52A1') {
       if (!rest) { this.showPlanTodoModal(); return '\u{1F4DD} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u4EFB\u52A1\u8BE6\u60C5'; }
@@ -531,16 +524,6 @@ var App = {
       if (!rest) { this.switchWindow('inspiration'); this.showInspirationModal(); return '\u{1F4A1} 请在弹窗中记录灵感'; }
       Storage.addInspiration(rest, '手动');
       return '\u2705 灵感已记录';
-    }
-    if (type === '/复盘') {
-      this.switchWindow('review');
-      this.showReviewModal();
-      return '\u{1F504} 请在弹窗中填写复盘';
-    }
-    if (type === '/报销') {
-      this.switchWindow('expenseForm');
-      this.showExpenseFormModal();
-      return '\u{1F9FE} 请在弹窗中填写报销信息';
     }
     // ===== 历史今天 & 每天为什么 =====
     if (type === '/历史上的今天') {
@@ -1975,171 +1958,6 @@ var App = {
   },
   deleteInspiration: function(id) {
     Storage.deleteInspiration(id); this.render(); this.showToast('已删除');
-  },
-
-  // ===== Window: Review (内容复盘) =====
-  renderReview: function() {
-    var today = Storage.today();
-    var review = Storage.getReview(today);
-    var dates = Storage.getReviewDates();
-    var h = '<div class="window-header"><div class="window-title">\u{1F504} 内容复盘</div>';
-    h += '<button class="btn btn-primary btn-sm" onclick="App.showReviewModal()">' + (review ? '编辑' : '+ 复盘') + '</button></div>';
-    if (review) {
-      h += '<div class="card"><div class="card-title">\u{1F4CB} 今日复盘 (' + today + ')</div>';
-      if (review.summary) h += '<div style="margin-bottom:10px;"><b>今日总结</b><div style="color:#666;margin-top:4px;line-height:1.6;">' + this._esc(review.summary) + '</div></div>';
-      if (review.achievements) h += '<div style="margin-bottom:10px;"><b style="color:#2A8B3A;">\u2705 成果</b><div style="color:#666;margin-top:4px;line-height:1.6;">' + this._esc(review.achievements) + '</div></div>';
-      if (review.improvements) h += '<div style="margin-bottom:10px;"><b style="color:#FF6B6B;">\u{1F4A9} 待改进</b><div style="color:#666;margin-top:4px;line-height:1.6;">' + this._esc(review.improvements) + '</div></div>';
-      if (review.nextActions) h += '<div><b style="color:#5BA4E5;">\u{1F449} 明日计划</b><div style="color:#666;margin-top:4px;line-height:1.6;">' + this._esc(review.nextActions) + '</div></div>';
-      h += '</div>';
-    } else {
-      h += '<div class="empty-state"><div class="empty-icon">\u{1F504}</div><div class="empty-text">今日尚未复盘<br>点击 + 复盘 开始</div></div>';
-    }
-    if (dates.length > 1) {
-      h += '<div class="card"><div class="card-title">\u{1F4C2} 历史复盘</div>';
-      dates.slice(0, 10).forEach(function(d) {
-        if (d === today) return;
-        h += '<div class="review-item" onclick="App.showReviewModal(\'' + d + '\')">';
-        h += '<span class="tag tag-blue">' + d + '</span></div>';
-      });
-      h += '</div>';
-    }
-    return h;
-  },
-  showReviewModal: function(date) {
-    var d = date || Storage.today();
-    var review = Storage.getReview(d);
-    var h = '<div class="modal-title">\u{1F504} 内容复盘 - ' + d + '</div><div class="modal-body">';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">今日总结</label><textarea class="input-field" id="rvSummary" style="min-height:60px;" placeholder="今天做了什么...">' + this._esc(review ? review.summary : '') + '</textarea></div>';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">成果亮点</label><textarea class="input-field" id="rvAch" style="min-height:60px;" placeholder="完成了什么、学到了什么...">' + this._esc(review ? review.achievements : '') + '</textarea></div>';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">待改进</label><textarea class="input-field" id="rvImp" style="min-height:60px;" placeholder="哪些做得不够好...">' + this._esc(review ? review.improvements : '') + '</textarea></div>';
-    h += '<div><label class="modal-label">明日计划</label><textarea class="input-field" id="rvNext" style="min-height:60px;" placeholder="明天要做什么...">' + this._esc(review ? review.nextActions : '') + '</textarea></div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">取消</button><button class="btn btn-primary" onclick="App.saveReview(\'' + d + '\')">保存</button></div>';
-    this.showModal(h);
-  },
-  saveReview: function(date) {
-    Storage.saveReview(date, {
-      summary: document.getElementById('rvSummary').value.trim(),
-      achievements: document.getElementById('rvAch').value.trim(),
-      improvements: document.getElementById('rvImp').value.trim(),
-      nextActions: document.getElementById('rvNext').value.trim()
-    });
-    this.closeModal(); this.render(); this.showToast('复盘已保存');
-  },
-
-  // ===== Window: Expense Form (报销表格) =====
-  renderExpenseForm: function() {
-    var forms = Storage.getExpenseForms();
-    var h = '<div class="window-header"><div class="window-title">\u{1F9FE} 报销表格</div>';
-    h += '<button class="btn btn-primary btn-sm" onclick="App.showExpenseFormModal()">+ 新建</button></div>';
-    h += '<div class="stat-grid">';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F9FE}</div><div class="stat-value">' + forms.length + '</div><div class="stat-label">报销单数</div></div>';
-    var totalAmount = forms.reduce(function(s, f) { return s + Storage.getExpenseFormTotal(f); }, 0);
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F4B0}</div><div class="stat-value">\u00A5' + totalAmount.toFixed(0) + '</div><div class="stat-label">总金额</div></div>';
-    h += '</div>';
-    if (forms.length === 0) {
-      h += '<div class="empty-state"><div class="empty-icon">\u{1F9FE}</div><div class="empty-text">暂无报销单</div></div>';
-    } else {
-      forms.forEach(function(f) {
-        var total = Storage.getExpenseFormTotal(f);
-        var statusColor = f.status === '已通过' ? '#2A8B3A' : f.status === '已驳回' ? '#FF6B6B' : f.status === '审批中' ? '#FF9800' : '#888';
-        h += '<div class="expense-form-item" onclick="App.showExpenseFormDetailModal(\'' + f.id + '\')">';
-        h += '<div class="form-item-header"><span class="form-item-title">' + App._esc(f.title) + '</span>';
-        h += '<span class="tag" style="background:' + statusColor + '20;color:' + statusColor + ';">' + f.status + '</span></div>';
-        h += '<div class="form-item-info">';
-        h += '<span>' + f.date + '</span>';
-        if (f.project) h += '<span>' + App._esc(f.project) + '</span>';
-        h += '<span style="font-weight:700;color:#5BA4E5;">\u00A5' + total.toFixed(2) + '</span>';
-        h += '</div>';
-        h += '<div class="form-item-items">' + f.items.length + ' 项明细</div>';
-        h += '</div>';
-      });
-    }
-    return h;
-  },
-  showExpenseFormModal: function() {
-    var categories = ['交通费', '住宿费', '餐饮费', '差旅费', '办公费', '通讯费', '其他'];
-    var h = '<div class="modal-title">\u{1F9FE} 新建报销单</div><div class="modal-body">';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">报销标题</label><input type="text" class="input-field" id="efTitle" placeholder="如: 7月差旅报销"></div>';
-    h += '<div style="display:flex;gap:10px;margin-bottom:12px;"><div style="flex:1;"><label class="modal-label">日期</label><input type="date" class="input-field" id="efDate" value="' + Storage.today() + '"></div>';
-    h += '<div style="flex:1;"><label class="modal-label">项目归属</label><input type="text" class="input-field" id="efProject" placeholder="项目名称"></div></div>';
-    h += '<div style="margin-bottom:8px;"><label class="modal-label">费用明细</label></div>';
-    h += '<div id="efItems"><div class="ef-item-row" style="display:flex;gap:6px;margin-bottom:8px;">';
-    h += '<select class="input-field" id="efCat0" style="flex:1;">';
-    categories.forEach(function(c) { h += '<option value="' + c + '">' + c + '</option>'; });
-    h += '</select>';
-    h += '<input type="number" class="input-field" id="efAmt0" placeholder="金额" style="width:100px;">';
-    h += '<input type="text" class="input-field" id="efDesc0" placeholder="说明" style="flex:1;">';
-    h += '</div></div>';
-    h += '<button class="btn btn-outline btn-sm" onclick="App.addExpenseItemRow()">+ 添加明细</button>';
-    h += '<div style="margin-top:12px;"><label class="modal-label">收款账户</label><input type="text" class="input-field" id="efAccount" placeholder="收款账户信息"></div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">取消</button><button class="btn btn-primary" onclick="App.saveExpenseForm()">保存</button></div>';
-    this.showModal(h);
-    this._efItemCount = 1;
-  },
-  _efItemCount: 0,
-  addExpenseItemRow: function() {
-    var categories = ['交通费', '住宿费', '餐饮费', '差旅费', '办公费', '通讯费', '其他'];
-    var idx = this._efItemCount;
-    var container = document.getElementById('efItems');
-    var row = document.createElement('div');
-    row.className = 'ef-item-row';
-    row.style.cssText = 'display:flex;gap:6px;margin-bottom:8px;';
-    var sel = '<select class="input-field" id="efCat' + idx + '" style="flex:1;">';
-    categories.forEach(function(c) { sel += '<option value="' + c + '">' + c + '</option>'; });
-    sel += '</select>';
-    row.innerHTML = sel + '<input type="number" class="input-field" id="efAmt' + idx + '" placeholder="金额" style="width:100px;"><input type="text" class="input-field" id="efDesc' + idx + '" placeholder="说明" style="flex:1;">';
-    container.appendChild(row);
-    this._efItemCount++;
-  },
-  saveExpenseForm: function() {
-    var title = document.getElementById('efTitle').value.trim();
-    if (!title) { this.showToast('请输入报销标题'); return; }
-    var items = [];
-    for (var i = 0; i < this._efItemCount; i++) {
-      var cat = document.getElementById('efCat' + i);
-      var amt = document.getElementById('efAmt' + i);
-      var desc = document.getElementById('efDesc' + i);
-      if (cat && amt && amt.value) {
-        items.push({ category: cat.value, amount: parseFloat(amt.value) || 0, description: desc ? desc.value.trim() : '' });
-      }
-    }
-    if (items.length === 0) { this.showToast('请至少添加一条费用明细'); return; }
-    Storage.addExpenseForm({
-      title: title, date: document.getElementById('efDate').value,
-      project: document.getElementById('efProject').value.trim(),
-      items: items, account: document.getElementById('efAccount').value.trim()
-    });
-    this.closeModal(); this.render(); this.showToast('报销单已创建');
-  },
-  showExpenseFormDetailModal: function(id) {
-    var forms = Storage.getExpenseForms();
-    var f = forms.find(function(x) { return x.id === id; });
-    if (!f) return;
-    var total = Storage.getExpenseFormTotal(f);
-    var h = '<div class="modal-title">\u{1F9FE} ' + this._esc(f.title) + '</div><div class="modal-body">';
-    h += '<div style="margin-bottom:10px;font-size:15px;color:#666;">日期: ' + f.date + (f.project ? '<br>项目: ' + this._esc(f.project) : '') + (f.account ? '<br>收款: ' + this._esc(f.account) : '') + '</div>';
-    h += '<div class="table-wrap"><table class="data-table"><thead><tr><th>类别</th><th>金额</th><th>说明</th></tr></thead><tbody>';
-    f.items.forEach(function(item) {
-      h += '<tr><td><span class="tag tag-blue">' + item.category + '</span></td><td style="font-weight:700;">\u00A5' + item.amount.toFixed(2) + '</td><td>' + App._esc(item.description || '') + '</td></tr>';
-    });
-    h += '<tr style="font-weight:700;background:#E8F4FD;"><td>合计</td><td>\u00A5' + total.toFixed(2) + '</td><td></td></tr>';
-    h += '</tbody></table></div>';
-    h += '<div style="margin-top:12px;"><label class="modal-label">审批状态</label><select class="input-field" id="efStatus">';
-    ['草稿', '待审批', '审批中', '已通过', '已驳回'].forEach(function(s) {
-      h += '<option value="' + s + '"' + (f.status === s ? ' selected' : '') + '>' + s + '</option>';
-    });
-    h += '</select></div>';
-    h += '<div style="margin-top:8px;font-size:14px;color:#888;">审批人: ' + (f.approver1 || '未设置') + ' \u2192 ' + (f.approver2 || '未设置') + ' \u2192 ' + (f.approver3 || '未设置') + '</div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-danger" onclick="App.deleteExpenseForm(\'' + id + '\')">删除</button><button class="btn btn-outline" onclick="App.closeModal()">关闭</button><button class="btn btn-primary" onclick="App.saveExpenseFormStatus(\'' + id + '\')">保存</button></div>';
-    this.showModal(h);
-  },
-  saveExpenseFormStatus: function(id) {
-    var status = document.getElementById('efStatus').value;
-    Storage.updateExpenseForm(id, { status: status });
-    this.closeModal(); this.render(); this.showToast('状态已更新');
-  },
-  deleteExpenseForm: function(id) {
-    Storage.deleteExpenseForm(id); this.closeModal(); this.render(); this.showToast('已删除');
   },
   // ===== Settings Modal =====
   showSettingsModal: function() {
