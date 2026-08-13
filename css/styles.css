@@ -433,6 +433,21 @@ textarea.input-field { min-height: 100px; resize: vertical; line-height: 1.6; }
 .why-source a { color: var(--miffy-blue, #5BA4E5); text-decoration: none; }
 .loading-state { text-align: center; padding: 40px 20px; }
 .loading-state .loading-icon { font-size: 36px; animation: spin 1.5s linear infinite; display: inline-block; }
+
+/* ===== 每日单词 ===== */
+.word-list { display: flex; flex-direction: column; gap: 6px; }
+.word-card { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: box-shadow 0.2s; }
+.word-card:active { box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.word-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.word-num { font-size: 12px; color: #ccc; min-width: 22px; text-align: center; background: #f5f5f5; border-radius: 6px; padding: 1px 4px; }
+.word-spell { font-size: 16px; font-weight: 700; color: #333; }
+.word-phonetic { font-size: 13px; color: #999; font-style: italic; }
+.word-pos { font-size: 11px; color: #fff; background: var(--miffy-blue, #5BA4E5); padding: 1px 6px; border-radius: 8px; }
+.word-meaning { font-size: 14px; color: #555; margin-left: auto; }
+.word-expand { font-size: 10px; color: #ccc; }
+.word-detail { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #eee; }
+.word-row { display: flex; gap: 8px; margin-bottom: 4px; font-size: 13px; line-height: 1.5; }
+.word-label { color: var(--miffy-blue, #5BA4E5); white-space: nowrap; font-weight: 600; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 /* ===== 移动端适配 ===== */
