@@ -489,12 +489,8 @@ var App = {
     // ===== \u65F6\u653F\u70ED\u70B9\u6307\u4EE4 =====
     if (type === '/\u4ECA\u65E5\u7B80\u62A5') {
       this.switchWindow('news');
-      var today = Storage.today();
-      if (!Storage.getNewsBriefing(today)) {
-        Storage.createNewsBriefing(today);
-        return '\u2705 \u5DF2\u751F\u6210\u4ECA\u65E5\u7B80\u62A5';
-      }
-      return '\u2705 \u4ECA\u65E5\u7B80\u62A5\u5DF2\u5B58\u5728';
+      this.fetchNewsFromWeb(false);
+      return '\u{1F504} \u6B63\u5728\u4ECE\u7F51\u7EDC\u83B7\u53D6\u65F6\u653F\u8D44\u8BAF\u2026';
     }
     if (type === '/\u672C\u5468\u6C47\u603B') {
       this.switchWindow('news');
@@ -1143,17 +1139,28 @@ var App = {
   renderNews: function() {
     var today = Storage.today();
     var briefing = Storage.getNewsBriefing(today);
+    var webFetched = Storage.isNewsWebFetched(today);
     var h = '<div class="window-header"><div class="window-title">\u{1F4F0} 时政热点</div>';
     h += '<div style="display:flex;gap:6px;">';
-    h += '<button class="btn-icon-sm" onclick="App.showNewsArchiveModal()" title="归档">\u{1F4C2}</button>';
-    h += '<button class="btn-icon-sm" onclick="App.showNewsFavoritesModal()" title="收藏库">\u2B50</button>';
-    h += '<button class="btn-icon-sm" onclick="App.doExportIndustryViews()" title="导出">\u{1F4E4}</button>';
+    h += '<button class="btn-icon-sm" onclick="App.fetchNewsFromWeb(false)" title="\u5237\u65B0\u8D44\u8BAF">\u{1F504}</button>';
+    h += '<button class="btn-icon-sm" onclick="App.showNewsArchiveModal()" title="\u5F52\u6863">\u{1F4C2}</button>';
+    h += '<button class="btn-icon-sm" onclick="App.showNewsFavoritesModal()" title="\u6536\u85CF\u5E93">\u2B50</button>';
+    h += '<button class="btn-icon-sm" onclick="App.doExportIndustryViews()" title="\u5BFC\u51FA">\u{1F4E4}</button>';
     h += '</div></div>';
-    if (!briefing) {
-      h += '<div class="news-fetch-error">';
-      h += '\u26A0\uFE0F 今日资讯自动获取失败，可执行 /今日简报 手动触发';
-      h += '<br><button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="App.manualFetchBriefing()">\u{1F504} 手动生成今日简报</button>';
-      h += '</div>';
+    // \u6BCF\u5929\u9996\u6B21\u6253\u5F00\u81EA\u52A8\u4ECE\u7F51\u7EDC\u6293\u53D6
+    if (!webFetched) {
+      this.fetchNewsFromWeb(true);
+    }
+    var hasContent = briefing && briefing.sections && (briefing.sections.macro.length > 0 || briefing.sections.ai.length > 0 || briefing.sections.expo.length > 0 || briefing.sections.livelihood.length > 0);
+    if (!hasContent) {
+      if (!webFetched) {
+        h += '<div class="loading-state"><div class="loading-icon">\u23F3</div><div style="margin-top:8px;color:#999;">\u6B63\u5728\u4ECE\u7F51\u7EDC\u83B7\u53D6\u65F6\u653F\u8D44\u8BAF\u2026</div></div>';
+      } else {
+        h += '<div class="news-fetch-error">';
+        h += '\u26A0\uFE0F \u8D44\u8BAF\u83B7\u53D6\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u540E\u91CD\u8BD5';
+        h += '<br><button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="App.fetchNewsFromWeb(false)">\u{1F504} \u91CD\u65B0\u83B7\u53D6</button>';
+        h += '</div>';
+      }
       return h;
     }
     var now = new Date();
@@ -1206,9 +1213,96 @@ var App = {
     return h;
   },
   manualFetchBriefing: function() {
-    Storage.createNewsBriefing(Storage.today());
-    this.render();
-    this.showToast('\u2705 今日简报已生成');
+    this.fetchNewsFromWeb(false);
+  },
+  fetchNewsFromWeb: function(silent) {
+    var self = this;
+    var today = Storage.today();
+    if (!silent) this.showToast('\u{1F504} \u6B63\u5728\u4ECE\u7F51\u7EDC\u83B7\u53D6\u65F6\u653F\u8D44\u8BAF\u2026');
+
+    // RSS feeds for each section - fetched via rss2json.com API (handles CORS)
+    var feeds = {
+      macro: [
+        'http://www.chinadaily.com.cn/rss/business_rss.xml',
+        'https://feeds.bbci.co.uk/news/business/rss.xml'
+      ],
+      ai: [
+        'http://www.chinadaily.com.cn/rss/scitech_rss.xml',
+        'https://techcrunch.com/feed/'
+      ],
+      expo: [
+        'http://www.chinadaily.com.cn/rss/world_rss.xml',
+        'https://feeds.bbci.co.uk/news/technology/rss.xml'
+      ],
+      livelihood: [
+        'http://www.chinadaily.com.cn/rss/china_rss.xml',
+        'https://feeds.bbci.co.uk/news/world/asia/china/rss.xml'
+      ]
+    };
+
+    var rss2jsonBase = 'https://api.rss2json.com/v1/api.json?rss_url=';
+    var allPromises = [];
+
+    Object.keys(feeds).forEach(function(section) {
+      feeds[section].forEach(function(feedUrl) {
+        var apiUrl = rss2jsonBase + encodeURIComponent(feedUrl) + '&count=6';
+        var p = fetch(apiUrl).then(function(res) { return res.json(); }).then(function(data) {
+          var items = [];
+          if (data && data.status === 'ok' && data.items) {
+            var feedTitle = (data.feed && data.feed.title) ? data.feed.title : '';
+            data.items.forEach(function(item) {
+              var desc = item.description || item.content || '';
+              desc = desc.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&[a-z]+;/g, '').replace(/\s+/g, ' ').trim();
+              if (desc.length > 300) desc = desc.substring(0, 300) + '...';
+              items.push({
+                id: 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8),
+                title: (item.title || '').trim(),
+                summary: desc,
+                source: feedTitle,
+                link: item.link || '',
+                impact: '',
+                thought: '',
+                favorited: false,
+                fromWeb: true,
+                createdAt: Date.now()
+              });
+            });
+          }
+          return { section: section, items: items };
+        }).catch(function(err) {
+          console.log('[News] Feed error:', feedUrl, err);
+          return { section: section, items: [] };
+        });
+        allPromises.push(p);
+      });
+    });
+
+    Promise.all(allPromises).then(function(results) {
+      var sections = { macro: [], ai: [], expo: [], livelihood: [] };
+      var seen = {};
+      results.forEach(function(r) {
+        r.items.forEach(function(item) {
+          var key = item.title;
+          if (key && !seen[key] && sections[r.section].length < 6) {
+            seen[key] = true;
+            sections[r.section].push(item);
+          }
+        });
+      });
+      Storage.saveNewsBriefingFromWeb(today, sections);
+      self.render();
+      var total = sections.macro.length + sections.ai.length + sections.expo.length + sections.livelihood.length;
+      if (total > 0) {
+        if (!silent) self.showToast('\u2705 \u5DF2\u83B7\u53D6 ' + total + ' \u6761\u65F6\u653F\u8D44\u8BAF');
+      } else {
+        if (!silent) self.showToast('\u26A0\uFE0F \u8D44\u8BAF\u83B7\u53D6\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u540E\u91CD\u8BD5');
+      }
+    }).catch(function(err) {
+      console.error('[News] Fetch error:', err);
+      Storage.setNewsWebFetched(today);
+      self.render();
+      if (!silent) self.showToast('\u26A0\uFE0F \u8D44\u8BAF\u83B7\u53D6\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5');
+    });
   },
   showNewsItemModal: function(section) {
     var sections = { macro: '宏观经贸政策', ai: 'AI科技产业', expo: '展会投融资', livelihood: '民生热点' };
