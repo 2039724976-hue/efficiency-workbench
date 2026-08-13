@@ -27,6 +27,7 @@ const Storage = {
     NEWS_FAVORITES: 'news_favorites',
     NEWS_INSPIRATIONS: 'news_inspirations',
     ENGLISH: 'english_data',
+    DAILY_WORDS: 'daily_words',
     READING: 'reading_data',
     EXERCISE: 'exercise_data',
     INSPIRATIONS: 'inspirations',
@@ -1099,6 +1100,25 @@ const Storage = {
       if (dates[ds]) { streak++; day.setDate(day.getDate() - 1); } else break;
     }
     return streak;
+  },
+
+  // ===== 每日单词 =====
+  getDailyWords: function(date) {
+    var all = this.get(this.KEYS.DAILY_WORDS) || {};
+    return all[date] || null;
+  },
+  isDailyWordsFetched: function(date) {
+    var all = this.get(this.KEYS.DAILY_WORDS) || {};
+    return !!(all[date] && all[date].webFetched === true);
+  },
+  saveDailyWords: function(date, words) {
+    var all = this.get(this.KEYS.DAILY_WORDS) || {};
+    all[date] = { date: date, words: words, webFetched: true, fetchedAt: this.now() };
+    this.set(this.KEYS.DAILY_WORDS, all);
+  },
+  getDailyWordsDates: function() {
+    var all = this.get(this.KEYS.DAILY_WORDS) || {};
+    return Object.keys(all).filter(function(k) { return k.length === 10; }).sort().reverse();
   },
 
   // ===== 读书记录 =====
