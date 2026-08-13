@@ -1514,20 +1514,41 @@ var App = {
     if (wordData && wordData.words && wordData.words.length > 0) {
       h += '<div class="word-list">';
       wordData.words.forEach(function(w, i) {
+        var posShort = w.pos ? w.pos.replace('noun','n.').replace('verb','v.').replace('adjective','adj.').replace('adverb','adv.').replace('pronoun','pron.').replace('preposition','prep.').replace('conjunction','conj.') : '';
         h += '<div class="word-card" onclick="App.toggleWordDetail(this)">';
         h += '<div class="word-header">';
         h += '<span class="word-num">' + (i + 1) + '</span>';
         h += '<span class="word-spell">' + self._esc(w.word) + '</span>';
-        if (w.phonetic) h += '<span class="word-phonetic">' + self._esc(w.phonetic) + '</span>';
-        if (w.pos) h += '<span class="word-pos">' + self._esc(w.pos) + '</span>';
+        if (posShort) h += '<span class="word-pos">' + self._esc(posShort) + '</span>';
         if (w.meaning) h += '<span class="word-meaning">' + self._esc(w.meaning) + '</span>';
         h += '<span class="word-expand">\u25BC</span>';
         h += '</div>';
-        h += '<div class="word-detail" style="display:none;">';
-        if (w.definition) h += '<div class="word-row"><span class="word-label">\u{1F4D6} 释义</span><span>' + self._esc(w.definition) + '</span></div>';
-        if (w.example) h += '<div class="word-row"><span class="word-label">\u{1F4DD} 例句</span><span>' + self._esc(w.example) + '</span></div>';
-        if (w.tip) h += '<div class="word-row"><span class="word-label">\u{1F4A1} 记忆</span><span>' + self._esc(w.tip) + '</span></div>';
+        h += '<div class="word-detail"><div class="word-detail-inner">';
+        h += '<div class="word-section"><div class="word-section-title">\u2728 高频搭配</div>';
+        if (w.collocations && w.collocations.length > 0) {
+          h += '<div class="word-collocations">';
+          w.collocations.forEach(function(c) { h += '<span class="word-collocation">' + self._esc(c) + '</span>'; });
+          h += '</div>';
+        } else {
+          h += '<div class="word-empty">暂无搭配数据</div>';
+        }
         h += '</div>';
+        h += '<div class="word-section"><div class="word-section-title">\u{1F4DD} 实用例句</div>';
+        if (w.example) {
+          h += '<div class="word-example">' + self._esc(w.example) + '</div>';
+          if (w.exampleZh) h += '<div class="word-example-zh">' + self._esc(w.exampleZh) + '</div>';
+        } else {
+          h += '<div class="word-empty">暂无例句</div>';
+        }
+        h += '</div>';
+        h += '<div class="word-section"><div class="word-section-title">\u26A0\uFE0F 易混提示</div>';
+        if (w.confusion) {
+          h += '<div class="word-confusion">' + self._esc(w.confusion) + '</div>';
+        } else {
+          h += '<div class="word-empty">无特殊辨析</div>';
+        }
+        h += '</div>';
+        h += '</div></div>';
         h += '</div>';
       });
       h += '</div>';
@@ -1561,17 +1582,7 @@ var App = {
     return h;
   },
   toggleWordDetail: function(el) {
-    var detail = el.querySelector('.word-detail');
-    var arrow = el.querySelector('.word-expand');
-    if (detail) {
-      if (detail.style.display === 'none') {
-        detail.style.display = 'block';
-        if (arrow) arrow.textContent = '\u25B2';
-      } else {
-        detail.style.display = 'none';
-        if (arrow) arrow.textContent = '\u25BC';
-      }
-    }
+    el.classList.toggle('expanded');
   },
   fetchDailyWords: function(silent) {
     var self = this;
@@ -1616,9 +1627,10 @@ var App = {
             phonetic: detail.phonetic || '',
             pos: detail.pos || (w.tags && w.tags.length > 0 ? w.tags[0] : ''),
             meaning: detail.meaning || '',
-            definition: detail.definition || (w.defs && w.defs.length > 0 ? w.defs[0].replace(/^\w+\t/, '') : ''),
+            collocations: detail.collocations || [],
             example: detail.example || '',
-            tip: self._generateWordTip(w.word, detail.pos || '')
+            exampleZh: detail.exampleZh || '',
+            confusion: self._generateConfusionTip(w.word, detail.pos || '')
           };
         }).catch(function() {
           return {
@@ -1626,9 +1638,10 @@ var App = {
             phonetic: '',
             pos: (w.tags && w.tags.length > 0 ? w.tags[0] : ''),
             meaning: '',
-            definition: (w.defs && w.defs.length > 0 ? w.defs[0].replace(/^\w+\t/, '') : ''),
+            collocations: [],
             example: '',
-            tip: self._generateWordTip(w.word, '')
+            exampleZh: '',
+            confusion: self._generateConfusionTip(w.word, '')
           };
         });
       });
@@ -1649,28 +1662,25 @@ var App = {
     var translateUrl = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(word) + '&langpair=en|zh-CN';
 
     var dictPromise = fetch(dictUrl).then(function(res) { return res.json(); }).then(function(data) {
-      var result = { phonetic: '', pos: '', definition: '', example: '' };
+      var result = { phonetic: '', pos: '', example: '' };
       if (Array.isArray(data) && data.length > 0) {
         var entry = data[0];
-        // 音标
         if (entry.phonetics && entry.phonetics.length > 0) {
           for (var i = 0; i < entry.phonetics.length; i++) {
             if (entry.phonetics[i].text) { result.phonetic = entry.phonetics[i].text; break; }
           }
         }
-        // 释义+例句
         if (entry.meanings && entry.meanings.length > 0) {
           var m = entry.meanings[0];
           result.pos = m.partOfSpeech || '';
           if (m.definitions && m.definitions.length > 0) {
             var d = m.definitions[0];
-            result.definition = d.definition || '';
             result.example = d.example || '';
           }
         }
       }
       return result;
-    }).catch(function() { return { phonetic: '', pos: '', definition: '', example: '' }; });
+    }).catch(function() { return { phonetic: '', pos: '', example: '' }; });
 
     var transPromise = fetch(translateUrl).then(function(res) { return res.json(); }).then(function(data) {
       if (data && data.responseData && data.responseData.translatedText) {
@@ -1679,43 +1689,47 @@ var App = {
       return '';
     }).catch(function() { return ''; });
 
-    return Promise.all([dictPromise, transPromise]).then(function(results) {
+    var collocPromise = fetch('https://api.datamuse.com/words?rel_jja=' + encodeURIComponent(word) + '&max=5').then(function(res) { return res.json(); }).then(function(data) {
+      if (Array.isArray(data) && data.length > 0) {
+        return data.slice(0, 3).map(function(item) { return word + ' ' + item.word; });
+      }
+      return [];
+    }).catch(function() { return []; });
+
+    return Promise.all([dictPromise, transPromise, collocPromise]).then(function(results) {
       var detail = results[0];
       detail.meaning = results[1];
+      detail.collocations = results[2];
+      if (detail.example && detail.example.length < 200) {
+        var exUrl = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(detail.example) + '&langpair=en|zh-CN';
+        return fetch(exUrl).then(function(res) { return res.json(); }).then(function(data) {
+          detail.exampleZh = (data && data.responseData && data.responseData.translatedText) ? data.responseData.translatedText : '';
+          return detail;
+        }).catch(function() { detail.exampleZh = ''; return detail; });
+      }
+      detail.exampleZh = '';
       return detail;
     });
   },
-  _generateWordTip: function(word, pos) {
+  _generateConfusionTip: function(word, pos) {
     var w = word.toLowerCase();
     var tips = [];
-
-    // 前缀
     if (w.indexOf('un') === 0 && w.length > 4) tips.push('un- 前缀表否定（如 unhappy 不开心的）');
     if (w.indexOf('re') === 0 && w.length > 4) tips.push('re- 前缀表重新（如 rewrite 重写）');
     if (w.indexOf('pre') === 0 && w.length > 5) tips.push('pre- 前缀表预先（如 preview 预览）');
     if (w.indexOf('dis') === 0 && w.length > 5) tips.push('dis- 前缀表相反（如 disagree 不同意）');
     if (w.indexOf('over') === 0 && w.length > 6) tips.push('over- 前缀表过度（如 overwork 过度工作）');
     if (w.indexOf('under') === 0 && w.length > 7) tips.push('under- 前缀表不足（如 underestimate 低估）');
-
-    // 后缀
     if (w.length > 5 && w.lastIndexOf('tion') === w.length - 4) tips.push('-tion 名词后缀，表动作或状态');
     if (w.length > 5 && w.lastIndexOf('ment') === w.length - 4) tips.push('-ment 名词后缀，表行为结果');
-    if (w.length > 5 && w.lastIndexOf('able') === w.length - 4) tips.push('-able 形容词后缀，表可以…的');
-    if (w.length > 4 && w.lastIndexOf('ful') === w.length - 3) tips.push('-ful 形容词后缀，表充满…的');
-    if (w.length > 5 && w.lastIndexOf('less') === w.length - 4) tips.push('-less 形容词后缀，表没有…的');
+    if (w.length > 5 && w.lastIndexOf('able') === w.length - 4) tips.push('-able 形容词后缀，表可以\u2026的');
+    if (w.length > 4 && w.lastIndexOf('ful') === w.length - 3) tips.push('-ful 形容词后缀，表充满\u2026的');
+    if (w.length > 5 && w.lastIndexOf('less') === w.length - 4) tips.push('-less 形容词后缀，表没有\u2026的');
     if (w.length > 5 && w.lastIndexOf('ness') === w.length - 4) tips.push('-ness 名词后缀，表性质或状态');
     if (w.length > 4 && w.lastIndexOf('ly') === w.length - 2) tips.push('-ly 副词后缀，表方式');
-    if (w.length > 4 && w.lastIndexOf('er') === w.length - 2 && pos === 'n') tips.push('-er 名词后缀，表做…的人');
-    if (w.length > 5 && w.lastIndexOf('ize') === w.length - 3) tips.push('-ize 动词后缀，表使…化');
-    if (w.length > 5 && w.lastIndexOf('ist') === w.length - 3) tips.push('-ist 名词后缀，表做…的人');
-
-    if (tips.length === 0) {
-      // 词根提示
-      if (w.length >= 8) tips.push('\u8FD9\u662F\u4E00\u4E2A\u8F83\u957F\u7684\u5355\u8BCD\uFF0C\u53EF\u5C1D\u8BD5\u62C6\u5206\u8BB0\u5FC6\uFF1A' + w.substring(0, Math.floor(w.length / 2)) + ' + ' + w.substring(Math.floor(w.length / 2)));
-      else tips.push('\u53CD\u590D\u6717\u8BFB\u52A0\u5F3A\u5316\u8BB0\u5FC6\uFF0C\u5C1D\u8BD5\u7528\u5B83\u9020\u4E2A\u53E5\u5B50');
-    }
-
-    return tips[0];
+    if (w.length > 5 && w.lastIndexOf('ize') === w.length - 3) tips.push('-ize 动词后缀，表使\u2026化');
+    if (w.length > 5 && w.lastIndexOf('ist') === w.length - 3) tips.push('-ist 名词后缀，表做\u2026的人');
+    return tips.length > 0 ? tips[0] : '';
   },
   showEnglishModal: function() {
     var types = ['单词记忆', '听力练习', '阅读理解', '口语练习', '写作练习'];
