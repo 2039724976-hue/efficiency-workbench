@@ -141,15 +141,14 @@ var Scheduler = {
         schedule: { type: 'daily', time: '08:00' },
         lastRun: null,
         action: function() {
-          try {
-            var today = Storage.today();
-            Storage.createNewsBriefing(today);
-            Storage.addSchedulerLog('每日资讯拉取', 'success', '已生成 ' + today + ' 简报模板');
-            return '已自动生成今日资讯简报模板';
-          } catch (error) {
-            Storage.addSchedulerLog('每日资讯拉取', 'error', error.message);
-            throw error;
+          var today = Storage.today();
+          if (typeof App !== 'undefined' && App.fetchNewsFromWeb) {
+            App.fetchNewsFromWeb(true);
+            Storage.addSchedulerLog('每日资讯拉取', 'success', '已触发网络获取 ' + today);
+            return '已触发时政资讯网络获取';
           }
+          Storage.addSchedulerLog('每日资讯拉取', 'success', 'App未打开，将在打开时自动获取');
+          return 'App未打开，将在打开时自动获取';
         }
       }
     ];
