@@ -1408,11 +1408,16 @@ var App = {
   },
   // ===== Window: English (英语学习) =====
   renderEnglish: function() {
+    var self = this;
     var data = Storage.getEnglishData();
     var todayMin = Storage.getEnglishTodayMinutes();
     var streak = Storage.getEnglishStreak();
     var goal = data.dailyGoal;
     var pct = goal > 0 ? Math.min(100, Math.round(todayMin / goal * 100)) : 0;
+    var today = Storage.today();
+    var wordData = Storage.getDailyWords(today);
+    var wordsFetched = Storage.isDailyWordsFetched(today);
+
     var h = '<div class="window-header"><div class="window-title">\u{1F524} 英语学习</div>';
     h += '<button class="btn btn-primary btn-sm" onclick="App.showEnglishModal()">+ 打卡</button></div>';
     h += '<div class="stat-grid">';
@@ -1424,6 +1429,43 @@ var App = {
       h += '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:15px;color:#888;margin-bottom:4px;"><span>今日目标</span><span>' + pct + '%</span></div>';
       h += '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;"></div></div></div>';
     }
+
+    // ===== 每日单词板块 =====
+    h += '<div class="card"><div class="card-title">\u{1F4D8} 每日20词';
+    h += '<button class="btn btn-primary btn-sm" style="float:right;font-size:12px;padding:2px 8px;" onclick="App.fetchDailyWords(false)">\u{1F504} 换一批</button>';
+    h += '</div>';
+    if (wordData && wordData.words && wordData.words.length > 0) {
+      h += '<div class="word-list">';
+      wordData.words.forEach(function(w, i) {
+        h += '<div class="word-card" onclick="App.toggleWordDetail(this)">';
+        h += '<div class="word-header">';
+        h += '<span class="word-num">' + (i + 1) + '</span>';
+        h += '<span class="word-spell">' + self._esc(w.word) + '</span>';
+        if (w.phonetic) h += '<span class="word-phonetic">' + self._esc(w.phonetic) + '</span>';
+        if (w.pos) h += '<span class="word-pos">' + self._esc(w.pos) + '</span>';
+        if (w.meaning) h += '<span class="word-meaning">' + self._esc(w.meaning) + '</span>';
+        h += '<span class="word-expand">\u25BC</span>';
+        h += '</div>';
+        h += '<div class="word-detail" style="display:none;">';
+        if (w.definition) h += '<div class="word-row"><span class="word-label">\u{1F4D6} 释义</span><span>' + self._esc(w.definition) + '</span></div>';
+        if (w.example) h += '<div class="word-row"><span class="word-label">\u{1F4DD} 例句</span><span>' + self._esc(w.example) + '</span></div>';
+        if (w.tip) h += '<div class="word-row"><span class="word-label">\u{1F4A1} 记忆</span><span>' + self._esc(w.tip) + '</span></div>';
+        h += '</div>';
+        h += '</div>';
+      });
+      h += '</div>';
+    } else if (!wordsFetched) {
+      h += '<div class="loading-state"><div class="loading-icon">\u23F3</div><div style="margin-top:8px;color:#999;">\u6B63\u5728\u4ECE\u7F51\u7EDC\u83B7\u53D6\u5355\u8BCD\u2026</div></div>';
+    } else {
+      h += '<div class="empty-state-sm"><div class="empty-text">\u6682\u65E0\u5355\u8BCD\u6570\u636E</div></div>';
+    }
+    h += '</div>';
+
+    // 每天首次打开自动获取
+    if (!wordsFetched) {
+      this.fetchDailyWords(true);
+    }
+
     h += '<div class="card"><div class="card-title">\u{1F4CB} 学习记录</div>';
     var recent = data.records.slice().reverse().slice(0, 20);
     if (recent.length === 0) {
@@ -1440,6 +1482,163 @@ var App = {
     }
     h += '</div>';
     return h;
+  },
+  toggleWordDetail: function(el) {
+    var detail = el.querySelector('.word-detail');
+    var arrow = el.querySelector('.word-expand');
+    if (detail) {
+      if (detail.style.display === 'none') {
+        detail.style.display = 'block';
+        if (arrow) arrow.textContent = '\u25B2';
+      } else {
+        detail.style.display = 'none';
+        if (arrow) arrow.textContent = '\u25BC';
+      }
+    }
+  },
+  fetchDailyWords: function(silent) {
+    var self = this;
+    var today = Storage.today();
+    if (!silent) this.showToast('\u{1F504} \u6B63\u5728\u83B7\u53D6\u5355\u8BCD\u2026');
+
+    // 轮换主题，确保每天不同
+    var topics = [
+      'workplace office business', 'daily life routine', 'food cooking meal',
+      'travel transportation journey', 'health medical body', 'emotion feeling mood',
+      'shopping purchase buy', 'technology computer digital', 'education learning study',
+      'social communication talk', 'finance money economy', 'environment nature weather',
+      'sports exercise fitness', 'home family house', 'time schedule plan'
+    ];
+    var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    var topic = topics[dayOfYear % topics.length];
+
+    var url = 'https://api.datamuse.com/words?ml=' + encodeURIComponent(topic) + '&max=40&md=d&md=p';
+
+    fetch(url).then(function(res) { return res.json(); }).then(function(data) {
+      if (!data || data.length === 0) {
+        if (!silent) self.showToast('\u26A0\uFE0F \u672A\u83B7\u53D6\u5230\u5355\u8BCD');
+        return;
+      }
+
+      // 过滤：去掉太短(<3字母)、含空格/连字符的词，取前20个
+      var candidates = data.filter(function(w) {
+        return w.word && w.word.length >= 3 && w.word.indexOf(' ') === -1 &&
+               w.word.indexOf('-') === -1 && /^[a-zA-Z]+$/.test(w.word);
+      }).slice(0, 20);
+
+      if (candidates.length === 0) {
+        if (!silent) self.showToast('\u26A0\uFE0F \u672A\u627E\u5230\u5408\u9002\u5355\u8BCD');
+        return;
+      }
+
+      // 为每个词异步获取详细信息
+      var promises = candidates.map(function(w) {
+        return self._fetchWordDetails(w.word).then(function(detail) {
+          return {
+            word: w.word,
+            phonetic: detail.phonetic || '',
+            pos: detail.pos || (w.tags && w.tags.length > 0 ? w.tags[0] : ''),
+            meaning: detail.meaning || '',
+            definition: detail.definition || (w.defs && w.defs.length > 0 ? w.defs[0].replace(/^\w+\t/, '') : ''),
+            example: detail.example || '',
+            tip: self._generateWordTip(w.word, detail.pos || '')
+          };
+        }).catch(function() {
+          return {
+            word: w.word,
+            phonetic: '',
+            pos: (w.tags && w.tags.length > 0 ? w.tags[0] : ''),
+            meaning: '',
+            definition: (w.defs && w.defs.length > 0 ? w.defs[0].replace(/^\w+\t/, '') : ''),
+            example: '',
+            tip: self._generateWordTip(w.word, '')
+          };
+        });
+      });
+
+      Promise.all(promises).then(function(words) {
+        Storage.saveDailyWords(today, words);
+        self.render();
+        if (!silent) self.showToast('\u2705 \u83B7\u53D6\u5230 ' + words.length + ' \u4E2A\u5355\u8BCD');
+      });
+    }).catch(function(err) {
+      console.error('[Words] fetch error:', err);
+      if (!silent) self.showToast('\u26A0\uFE0F \u7F51\u7EDC\u83B7\u53D6\u5931\u8D25');
+    });
+  },
+  _fetchWordDetails: function(word) {
+    var self = this;
+    var dictUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word);
+    var translateUrl = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(word) + '&langpair=en|zh-CN';
+
+    var dictPromise = fetch(dictUrl).then(function(res) { return res.json(); }).then(function(data) {
+      var result = { phonetic: '', pos: '', definition: '', example: '' };
+      if (Array.isArray(data) && data.length > 0) {
+        var entry = data[0];
+        // 音标
+        if (entry.phonetics && entry.phonetics.length > 0) {
+          for (var i = 0; i < entry.phonetics.length; i++) {
+            if (entry.phonetics[i].text) { result.phonetic = entry.phonetics[i].text; break; }
+          }
+        }
+        // 释义+例句
+        if (entry.meanings && entry.meanings.length > 0) {
+          var m = entry.meanings[0];
+          result.pos = m.partOfSpeech || '';
+          if (m.definitions && m.definitions.length > 0) {
+            var d = m.definitions[0];
+            result.definition = d.definition || '';
+            result.example = d.example || '';
+          }
+        }
+      }
+      return result;
+    }).catch(function() { return { phonetic: '', pos: '', definition: '', example: '' }; });
+
+    var transPromise = fetch(translateUrl).then(function(res) { return res.json(); }).then(function(data) {
+      if (data && data.responseData && data.responseData.translatedText) {
+        return data.responseData.translatedText;
+      }
+      return '';
+    }).catch(function() { return ''; });
+
+    return Promise.all([dictPromise, transPromise]).then(function(results) {
+      var detail = results[0];
+      detail.meaning = results[1];
+      return detail;
+    });
+  },
+  _generateWordTip: function(word, pos) {
+    var w = word.toLowerCase();
+    var tips = [];
+
+    // 前缀
+    if (w.indexOf('un') === 0 && w.length > 4) tips.push('un- 前缀表否定（如 unhappy 不开心的）');
+    if (w.indexOf('re') === 0 && w.length > 4) tips.push('re- 前缀表重新（如 rewrite 重写）');
+    if (w.indexOf('pre') === 0 && w.length > 5) tips.push('pre- 前缀表预先（如 preview 预览）');
+    if (w.indexOf('dis') === 0 && w.length > 5) tips.push('dis- 前缀表相反（如 disagree 不同意）');
+    if (w.indexOf('over') === 0 && w.length > 6) tips.push('over- 前缀表过度（如 overwork 过度工作）');
+    if (w.indexOf('under') === 0 && w.length > 7) tips.push('under- 前缀表不足（如 underestimate 低估）');
+
+    // 后缀
+    if (w.length > 5 && w.lastIndexOf('tion') === w.length - 4) tips.push('-tion 名词后缀，表动作或状态');
+    if (w.length > 5 && w.lastIndexOf('ment') === w.length - 4) tips.push('-ment 名词后缀，表行为结果');
+    if (w.length > 5 && w.lastIndexOf('able') === w.length - 4) tips.push('-able 形容词后缀，表可以…的');
+    if (w.length > 4 && w.lastIndexOf('ful') === w.length - 3) tips.push('-ful 形容词后缀，表充满…的');
+    if (w.length > 5 && w.lastIndexOf('less') === w.length - 4) tips.push('-less 形容词后缀，表没有…的');
+    if (w.length > 5 && w.lastIndexOf('ness') === w.length - 4) tips.push('-ness 名词后缀，表性质或状态');
+    if (w.length > 4 && w.lastIndexOf('ly') === w.length - 2) tips.push('-ly 副词后缀，表方式');
+    if (w.length > 4 && w.lastIndexOf('er') === w.length - 2 && pos === 'n') tips.push('-er 名词后缀，表做…的人');
+    if (w.length > 5 && w.lastIndexOf('ize') === w.length - 3) tips.push('-ize 动词后缀，表使…化');
+    if (w.length > 5 && w.lastIndexOf('ist') === w.length - 3) tips.push('-ist 名词后缀，表做…的人');
+
+    if (tips.length === 0) {
+      // 词根提示
+      if (w.length >= 8) tips.push('\u8FD9\u662F\u4E00\u4E2A\u8F83\u957F\u7684\u5355\u8BCD\uFF0C\u53EF\u5C1D\u8BD5\u62C6\u5206\u8BB0\u5FC6\uFF1A' + w.substring(0, Math.floor(w.length / 2)) + ' + ' + w.substring(Math.floor(w.length / 2)));
+      else tips.push('\u53CD\u590D\u6717\u8BFB\u52A0\u5F3A\u5316\u8BB0\u5FC6\uFF0C\u5C1D\u8BD5\u7528\u5B83\u9020\u4E2A\u53E5\u5B50');
+    }
+
+    return tips[0];
   },
   showEnglishModal: function() {
     var types = ['单词记忆', '听力练习', '阅读理解', '口语练习', '写作练习'];
