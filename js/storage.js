@@ -11,7 +11,6 @@ const Storage = {
   KEYS: {
     DAILY_PLANS: 'daily_plans',
     PLANS: 'plans',
-    CONTENT_REVIEW: 'content_review',
     TASKS: 'tasks',
     EXPENSES: 'expenses',
     NOTES: 'notes',
@@ -31,8 +30,6 @@ const Storage = {
     READING: 'reading_data',
     EXERCISE: 'exercise_data',
     INSPIRATIONS: 'inspirations',
-    REVIEWS: 'reviews',
-    EXPENSE_FORMS: 'expense_forms',
     HISTORY_TODAY: 'history_today',
     DAILY_WHY: 'daily_why'
   },
@@ -61,7 +58,6 @@ const Storage = {
     const defaults = {};
     defaults[this.KEYS.DAILY_PLANS] = {};
     defaults[this.KEYS.PLANS] = {};
-    defaults[this.KEYS.CONTENT_REVIEW] = [];
     defaults[this.KEYS.TASKS] = [];
     defaults[this.KEYS.EXPENSES] = [];
     defaults[this.KEYS.NOTES] = [];
@@ -79,8 +75,6 @@ const Storage = {
     defaults[this.KEYS.READING] = { books: [] };
     defaults[this.KEYS.EXERCISE] = { records: [], weeklyGoal: 3 };
     defaults[this.KEYS.INSPIRATIONS] = [];
-    defaults[this.KEYS.REVIEWS] = {};
-    defaults[this.KEYS.EXPENSE_FORMS] = [];
     defaults[this.KEYS.HISTORY_TODAY] = {};
     defaults[this.KEYS.DAILY_WHY] = { seenIds: [], lastDate: '' };
     Object.entries(defaults).forEach(function(entry) {
@@ -346,31 +340,6 @@ const Storage = {
     }.bind(this));
     this._savePlan(today, todayPlan);
     return { rolled: rolled, message: '已顺延 ' + rolled + ' 条未完成任务到今日' };
-  },
-
-  // --- 同步推送到内容复盘 ---
-  pushToContentReview: function(date) {
-    var plan = this.getPlan(date);
-    var review = this.get(this.KEYS.CONTENT_REVIEW) || [];
-    var snapshot = {
-      id: this._genId(),
-      date: date,
-      pushedAt: this.now(),
-      todayTodos: JSON.parse(JSON.stringify(plan.todayTodos)),
-      monthlyGoals: JSON.parse(JSON.stringify(plan.monthlyGoals)),
-      weeklyTasks: JSON.parse(JSON.stringify(plan.weeklyTasks)),
-      timePlan: JSON.parse(JSON.stringify(plan.timePlan)),
-      followUp: JSON.parse(JSON.stringify(plan.followUp)),
-      blockers: JSON.parse(JSON.stringify(plan.blockers))
-    };
-    review.unshift(snapshot);
-    if (review.length > 200) review.length = 200;
-    this.set(this.KEYS.CONTENT_REVIEW, review);
-    return snapshot;
-  },
-
-  getContentReview: function() {
-    return this.get(this.KEYS.CONTENT_REVIEW) || [];
   },
 
   // ===== 工时统计数据层 (memory/work_hour/) =====
@@ -1230,55 +1199,6 @@ const Storage = {
   deleteInspiration: function(id) {
     var list = this.getInspirations();
     this.set(this.KEYS.INSPIRATIONS, list.filter(function(x) { return x.id !== id; }));
-  },
-
-  // ===== 内容复盘 =====
-  getReview: function(date) {
-    var all = this.get(this.KEYS.REVIEWS) || {};
-    return all[date] || null;
-  },
-  saveReview: function(date, data) {
-    var all = this.get(this.KEYS.REVIEWS) || {};
-    all[date] = {
-      date: date, summary: data.summary || '',
-      achievements: data.achievements || '', improvements: data.improvements || '',
-      nextActions: data.nextActions || '', updatedAt: this.now()
-    };
-    this.set(this.KEYS.REVIEWS, all);
-  },
-  getReviewDates: function() {
-    var all = this.get(this.KEYS.REVIEWS) || {};
-    return Object.keys(all).sort().reverse();
-  },
-
-  // ===== 报销表格 =====
-  getExpenseForms: function() {
-    return this.get(this.KEYS.EXPENSE_FORMS) || [];
-  },
-  addExpenseForm: function(data) {
-    var list = this.getExpenseForms();
-    var form = {
-      id: this._genId(), title: data.title || '', date: data.date || this.today(),
-      project: data.project || '', items: data.items || [],
-      approver1: data.approver1 || '', approver2: data.approver2 || '',
-      approver3: data.approver3 || '', account: data.account || '',
-      status: '草稿', createdAt: Date.now()
-    };
-    list.unshift(form);
-    this.set(this.KEYS.EXPENSE_FORMS, list);
-    return form;
-  },
-  updateExpenseForm: function(id, updates) {
-    var list = this.getExpenseForms();
-    var f = list.find(function(x) { return x.id === id; });
-    if (f) { Object.assign(f, updates); this.set(this.KEYS.EXPENSE_FORMS, list); }
-  },
-  deleteExpenseForm: function(id) {
-    var list = this.getExpenseForms();
-    this.set(this.KEYS.EXPENSE_FORMS, list.filter(function(f) { return f.id !== id; }));
-  },
-  getExpenseFormTotal: function(form) {
-    return form.items.reduce(function(s, item) { return s + (parseFloat(item.amount) || 0); }, 0);
   },
 
   // ===== 历史上的今天 =====
