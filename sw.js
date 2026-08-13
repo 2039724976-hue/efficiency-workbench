@@ -1,14 +1,14 @@
 // Service Worker - 个人效率工作台 PWA (米菲兔风格 v2)
-const CACHE_NAME = 'miffy-workbench-v9';
+const CACHE_NAME = 'miffy-workbench-v10';
 const CACHE_FILES = [
   './',
   './index.html',
-  './css/styles.css?v=8',
-  './js/storage.js?v=8',
-  './js/today-in-history.js?v=8',
-  './js/daily-why.js?v=8',
-  './js/scheduler.js?v=8',
-  './js/app.js?v=8',
+  './css/styles.css?v=9',
+  './js/storage.js?v=9',
+  './js/today-in-history.js?v=9',
+  './js/daily-why.js?v=9',
+  './js/scheduler.js?v=9',
+  './js/app.js?v=9',
   './manifest.json'
 ];
 
