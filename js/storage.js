@@ -20,8 +20,6 @@ const Storage = {
     SETTINGS: 'settings',
     ARCHIVE: 'archive',
     SCHEDULER_LOG: 'scheduler_log',
-    WORK_HOUR: 'work_hour',
-    COMP_TIME: 'comp_time',
     NEWS_BRIEFINGS: 'news_briefings',
     NEWS_FAVORITES: 'news_favorites',
     NEWS_INSPIRATIONS: 'news_inspirations',
@@ -31,7 +29,9 @@ const Storage = {
     EXERCISE: 'exercise_data',
     INSPIRATIONS: 'inspirations',
     HISTORY_TODAY: 'history_today',
-    DAILY_WHY: 'daily_why'
+    DAILY_WHY: 'daily_why',
+    WORK_HOUR: 'work_hour',
+    COMP_TIME: 'comp_time'
   },
 
   cache: {},
@@ -66,8 +66,6 @@ const Storage = {
     defaults[this.KEYS.QUICK_HISTORY] = [];
     defaults[this.KEYS.ARCHIVE] = {};
     defaults[this.KEYS.SCHEDULER_LOG] = [];
-    defaults[this.KEYS.WORK_HOUR] = {};
-    defaults[this.KEYS.COMP_TIME] = { initialBalance: 96.00, currentBalance: 96.00, transactions: [] };
     defaults[this.KEYS.NEWS_BRIEFINGS] = {};
     defaults[this.KEYS.NEWS_FAVORITES] = [];
     defaults[this.KEYS.NEWS_INSPIRATIONS] = [];
@@ -77,6 +75,8 @@ const Storage = {
     defaults[this.KEYS.INSPIRATIONS] = [];
     defaults[this.KEYS.HISTORY_TODAY] = {};
     defaults[this.KEYS.DAILY_WHY] = { seenIds: [], lastDate: '' };
+    defaults[this.KEYS.WORK_HOUR] = {};
+    defaults[this.KEYS.COMP_TIME] = { balance: 0, transactions: [] };
     Object.entries(defaults).forEach(function(entry) {
       var key = entry[0], value = entry[1];
       if (this.cache[key] === null || this.cache[key] === undefined) {
@@ -340,370 +340,6 @@ const Storage = {
     }.bind(this));
     this._savePlan(today, todayPlan);
     return { rolled: rolled, message: '已顺延 ' + rolled + ' 条未完成任务到今日' };
-  },
-
-  // ===== 工时统计数据层 (memory/work_hour/) =====
-  // 节假日数据表 (法定节假日)
-  HOLIDAYS: {
-    '2025-01-01': true,
-    '2025-01-28': true, '2025-01-29': true, '2025-01-30': true, '2025-01-31': true,
-    '2025-02-01': true, '2025-02-02': true, '2025-02-03': true, '2025-02-04': true,
-    '2025-04-04': true, '2025-04-05': true, '2025-04-06': true,
-    '2025-05-01': true, '2025-05-02': true, '2025-05-03': true, '2025-05-04': true, '2025-05-05': true,
-    '2025-05-31': true, '2025-06-01': true, '2025-06-02': true,
-    '2025-10-01': true, '2025-10-02': true, '2025-10-03': true, '2025-10-04': true,
-    '2025-10-05': true, '2025-10-06': true, '2025-10-07': true, '2025-10-08': true,
-    '2026-01-01': true,
-    '2026-02-15': true, '2026-02-16': true, '2026-02-17': true, '2026-02-18': true,
-    '2026-02-19': true, '2026-02-20': true, '2026-02-21': true,
-    '2026-04-04': true, '2026-04-05': true, '2026-04-06': true,
-    '2026-05-01': true, '2026-05-02': true, '2026-05-03': true, '2026-05-04': true, '2026-05-05': true,
-    '2026-06-19': true, '2026-06-20': true, '2026-06-21': true,
-    '2026-09-25': true, '2026-09-26': true,
-    '2026-10-01': true, '2026-10-02': true, '2026-10-03': true, '2026-10-04': true,
-    '2026-10-05': true, '2026-10-06': true, '2026-10-07': true
-  },
-  // 调休工作日 (周末调休上班)
-  ADJUSTED_WORKDAYS: {
-    '2025-01-26': true, '2025-02-08': true,
-    '2025-04-27': true,
-    '2025-10-11': true,
-    '2026-02-14': true,
-    '2026-04-26': true,
-    '2026-10-10': true
-  },
-
-  // 判断日期类型: workday / weekend / holiday
-  getDayType: function(dateStr) {
-    if (this.ADJUSTED_WORKDAYS[dateStr]) return 'workday';
-    if (this.HOLIDAYS[dateStr]) return 'holiday';
-    var d = new Date(dateStr + 'T00:00:00');
-    var day = d.getDay();
-    if (day === 0 || day === 6) return 'weekend';
-    return 'workday';
-  },
-
-  // 获取月度数据
-  getMonthData: function(monthKey) {
-    var all = this.get(this.KEYS.WORK_HOUR) || {};
-    if (!all[monthKey]) {
-      var workdays = this._calcWorkdays(monthKey);
-      all[monthKey] = {
-        records: [],
-        workdays: workdays,
-        standardHours: workdays * 8,
-        manualWorkdays: null,
-        settled: false
-      };
-      this.set(this.KEYS.WORK_HOUR, all);
-    }
-    return all[monthKey];
-  },
-
-  // 计算当月应出勤工作日
-  _calcWorkdays: function(monthKey) {
-    try {
-      var parts = monthKey.split('-');
-      var year = parseInt(parts[0]);
-      var month = parseInt(parts[1]);
-      var lastDay = this.getLastDayOfMonth(year, month);
-      var count = 0;
-      for (var d = 1; d <= lastDay; d++) {
-        var ds = year + '-' + String(month).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-        var dt = this.getDayType(ds);
-        if (dt === 'workday') count++;
-      }
-      return count;
-    } catch (e) {
-      console.error('[Storage] calcWorkdays fail:', e);
-      return 21;
-    }
-  },
-
-  // 手动修改应出勤天数
-  setManualWorkdays: function(monthKey, days) {
-    var md = this.getMonthData(monthKey);
-    md.manualWorkdays = days;
-    md.workdays = days;
-    md.standardHours = days * 8;
-    this._saveMonthData(monthKey, md);
-  },
-
-  _saveMonthData: function(monthKey, data) {
-    var all = this.get(this.KEYS.WORK_HOUR) || {};
-    all[monthKey] = data;
-    this.set(this.KEYS.WORK_HOUR, all);
-  },
-
-  // 时间段打卡
-  addClockRecord: function(date, clockIn, clockOut, note) {
-    var monthKey = this.getMonthKey(date);
-    var md = this.getMonthData(monthKey);
-    var existing = md.records.find(function(r) { return r.date === date; });
-    if (existing) {
-      existing.clockIn = clockIn;
-      existing.clockOut = clockOut;
-      existing.note = note || '';
-      existing.source = 'clock';
-      existing.effectiveHours = this._calcEffectiveHours(clockIn, clockOut, date);
-      existing.settled = false;
-    } else {
-      md.records.push({
-        id: this._genId(),
-        date: date,
-        clockIn: clockIn,
-        clockOut: clockOut,
-        effectiveHours: this._calcEffectiveHours(clockIn, clockOut, date),
-        dayType: this.getDayType(date),
-        source: 'clock',
-        note: note || '',
-        settled: false
-      });
-    }
-    this._saveMonthData(monthKey, md);
-    return md.records[md.records.length - 1];
-  },
-
-  // 直接填写有效工时
-  setDirectHours: function(date, hours, note) {
-    var monthKey = this.getMonthKey(date);
-    var md = this.getMonthData(monthKey);
-    var existing = md.records.find(function(r) { return r.date === date; });
-    if (existing) {
-      existing.effectiveHours = parseFloat(hours);
-      existing.clockIn = '';
-      existing.clockOut = '';
-      existing.note = note || '';
-      existing.source = 'manual';
-      existing.settled = false;
-    } else {
-      md.records.push({
-        id: this._genId(),
-        date: date,
-        clockIn: '',
-        clockOut: '',
-        effectiveHours: parseFloat(hours),
-        dayType: this.getDayType(date),
-        source: 'manual',
-        note: note || '',
-        settled: false
-      });
-    }
-    this._saveMonthData(monthKey, md);
-  },
-
-  deleteClockRecord: function(date) {
-    var monthKey = this.getMonthKey(date);
-    var md = this.getMonthData(monthKey);
-    md.records = md.records.filter(function(r) { return r.date !== date; });
-    this._saveMonthData(monthKey, md);
-  },
-
-  // 计算有效工时 (扣除午休1h)
-  _calcEffectiveHours: function(clockIn, clockOut, dateStr) {
-    var inParts = clockIn.split(':');
-    var outParts = clockOut.split(':');
-    var inMin = parseInt(inParts[0]) * 60 + parseInt(inParts[1]);
-    var outMin = parseInt(outParts[0]) * 60 + parseInt(outParts[1]);
-    var totalMin = outMin - inMin;
-    if (totalMin <= 0) totalMin += 24 * 60;
-    // 如果跨越午休时段 (12:00-13:00), 扣除1h
-    var lunchStart = 12 * 60;
-    var lunchEnd = 13 * 60;
-    if (inMin < lunchStart && outMin > lunchEnd) {
-      totalMin -= 60;
-    } else if (inMin < lunchEnd && outMin > lunchEnd && inMin >= lunchStart) {
-      totalMin -= (outMin - lunchEnd < 60 ? outMin - lunchEnd : 60) - (lunchEnd - inMin < 0 ? 0 : 0);
-    }
-    return Math.round(totalMin / 60 * 100) / 100;
-  },
-
-  // ===== 调休管理 =====
-  getCompTime: function() {
-    var ct = this.get(this.KEYS.COMP_TIME);
-    if (!ct) {
-      ct = { initialBalance: 96.00, currentBalance: 96.00, transactions: [] };
-      this.set(this.KEYS.COMP_TIME, ct);
-    }
-    return ct;
-  },
-
-  addCompTransaction: function(type, hours, reason, date) {
-    var ct = this.getCompTime();
-    var h = parseFloat(hours);
-    var balanceAfter = ct.currentBalance;
-    if (type === 'earn') {
-      balanceAfter = Math.round((ct.currentBalance + h) * 100) / 100;
-    } else if (type === 'consume') {
-      balanceAfter = Math.round((ct.currentBalance - h) * 100) / 100;
-    }
-    ct.transactions.push({
-      id: this._genId(),
-      date: date || this.today(),
-      type: type,
-      hours: h,
-      reason: reason || '',
-      balanceAfter: balanceAfter
-    });
-    ct.currentBalance = balanceAfter;
-    this.set(this.KEYS.COMP_TIME, ct);
-    return balanceAfter;
-  },
-
-  // 手动登记调休消耗
-  useCompTime: function(hours, reason, date) {
-    return this.addCompTransaction('consume', hours, reason || '手动登记调休使用', date);
-  },
-
-  // 当日工时结算
-  settleDay: function(date) {
-    var monthKey = this.getMonthKey(date);
-    var md = this.getMonthData(monthKey);
-    var record = md.records.find(function(r) { return r.date === date; });
-    if (!record || record.settled) return { settled: false, message: '无待结算记录或已结算' };
-    var dayType = this.getDayType(date);
-    var hours = record.effectiveHours;
-    var delta = 0;
-    var reason = date + ' ';
-    if (dayType === 'workday') {
-      if (hours > 8) {
-        delta = Math.round((hours - 8) * 100) / 100;
-        reason += '工作日加班 +' + delta + 'h';
-        this.addCompTransaction('earn', delta, reason, date);
-      } else if (hours < 8) {
-        delta = Math.round((8 - hours) * 100) / 100;
-        reason += '工作日工时不足 -' + delta + 'h';
-        this.addCompTransaction('consume', delta, reason, date);
-      }
-    } else {
-      // 周末/节假日出勤全部计入调休
-      if (hours > 0) {
-        delta = hours;
-        reason += (dayType === 'weekend' ? '周末' : '节假日') + '出勤 +' + delta + 'h';
-        this.addCompTransaction('earn', delta, reason, date);
-      }
-    }
-    record.settled = true;
-    this._saveMonthData(monthKey, md);
-    var ct = this.getCompTime();
-    return {
-      settled: true,
-      delta: delta,
-      newBalance: ct.currentBalance,
-      warning: ct.currentBalance < 0,
-      message: reason
-    };
-  },
-
-  // 月度结算
-  settleMonth: function(monthKey) {
-    var md = this.getMonthData(monthKey);
-    var results = [];
-    var self = this;
-    md.records.forEach(function(r) {
-      if (!r.settled) {
-        var res = self.settleDay(r.date);
-        if (res.settled) results.push(res);
-      }
-    });
-    md.settled = true;
-    this._saveMonthData(monthKey, md);
-    var ct = this.getCompTime();
-    return {
-      count: results.length,
-      balance: ct.currentBalance,
-      warning: ct.currentBalance < 0,
-      results: results
-    };
-  },
-
-  // 重置当月打卡数据
-  resetMonth: function(monthKey) {
-    var all = this.get(this.KEYS.WORK_HOUR) || {};
-    var workdays = this._calcWorkdays(monthKey);
-    all[monthKey] = {
-      records: [],
-      workdays: workdays,
-      standardHours: workdays * 8,
-      manualWorkdays: null,
-      settled: false
-    };
-    this.set(this.KEYS.WORK_HOUR, all);
-  },
-
-  // 导出台账文本
-  exportLedger: function(monthKey) {
-    var md = this.getMonthData(monthKey);
-    var ct = this.getCompTime();
-    var lines = [];
-    lines.push('=== 工时台账 ' + monthKey + ' ===');
-    lines.push('应出勤工作日: ' + md.workdays + '天  标准工时: ' + md.standardHours + 'h');
-    lines.push('调休余额: ' + ct.currentBalance.toFixed(2) + 'h (初始: ' + ct.initialBalance.toFixed(2) + 'h)');
-    lines.push('');
-    lines.push('--- 打卡明细 ---');
-    lines.push('日期\t类型\t打卡\t有效工时\t来源\t备注');
-    md.records.forEach(function(r) {
-      var dt = r.dayType === 'workday' ? '工作日' : r.dayType === 'weekend' ? '周末' : '节假日';
-      var clk = r.clockIn && r.clockOut ? r.clockIn + '-' + r.clockOut : '直接填写';
-      var src = r.source === 'clock' ? '打卡' : '手动';
-      var settled = r.settled ? '已结算' : '未结算';
-      lines.push(r.date + '\t' + dt + '\t' + clk + '\t' + r.effectiveHours + 'h\t' + src + '\t' + (r.note || ''));
-    });
-    lines.push('');
-    lines.push('--- 调休流水 ---');
-    lines.push('日期\t类型\t时长\t余额\t原因');
-    ct.transactions.filter(function(t) { return t.date.startsWith(monthKey); }).forEach(function(t) {
-      var tp = t.type === 'earn' ? '获得' : '消耗';
-      lines.push(t.date + '\t' + tp + '\t' + t.hours + 'h\t' + t.balanceAfter.toFixed(2) + 'h\t' + t.reason);
-    });
-    return lines.join('\n');
-  },
-
-  // 月度汇总统计
-  getMonthSummary: function(monthKey) {
-    var md = this.getMonthData(monthKey);
-    var totalEffective = 0;
-    var totalOvertime = 0;
-    var totalDeficit = 0;
-    md.records.forEach(function(r) {
-      totalEffective += r.effectiveHours;
-      if (r.dayType === 'workday') {
-        if (r.effectiveHours > 8) totalOvertime += r.effectiveHours - 8;
-        else if (r.effectiveHours < 8) totalDeficit += 8 - r.effectiveHours;
-      } else {
-        totalOvertime += r.effectiveHours;
-      }
-    });
-    return {
-      workdays: md.workdays,
-      standardHours: md.standardHours,
-      totalEffective: Math.round(totalEffective * 100) / 100,
-      totalOvertime: Math.round(totalOvertime * 100) / 100,
-      totalDeficit: Math.round(totalDeficit * 100) / 100,
-      clockDays: md.records.length,
-      settled: md.settled,
-      compBalance: this.getCompTime().currentBalance
-    };
-  },
-  addTask(data) {
-    var tasks = this.get(this.KEYS.TASKS) || [];
-    var task = {
-      id: this._genId(), date: data.date || this.today(),
-      title: data.title || '', status: data.status || '待处理',
-      priority: data.priority || '普通', dueDate: data.dueDate || '', createdAt: Date.now()
-    };
-    tasks.push(task); this.set(this.KEYS.TASKS, tasks); return task;
-  },
-
-  updateTask(id, updates) {
-    var tasks = this.get(this.KEYS.TASKS) || [];
-    var task = tasks.find(function(t) { return t.id === id; });
-    if (task) { Object.assign(task, updates); this.set(this.KEYS.TASKS, tasks); }
-  },
-
-  deleteTask(id) {
-    var tasks = this.get(this.KEYS.TASKS) || [];
-    this.set(this.KEYS.TASKS, tasks.filter(function(t) { return t.id !== id; }));
   },
 
   // ===== 账目台账 =====
@@ -1059,7 +695,21 @@ const Storage = {
   // ===== 英语学习 =====
   getEnglishData: function() {
     var d = this.get(this.KEYS.ENGLISH);
-    if (!d) { d = { records: [], dailyGoal: 20 }; this.set(this.KEYS.ENGLISH, d); }
+    if (!d) {
+      d = {
+        records: [],
+        dailyGoal: 20,
+        goal: { name: '上海海事大学 MBA 备考', tag: '商务管理', totalWords: 200, dailyPush: 20 },
+        weekCheckin: 7,
+        wordStatus: {}
+      };
+      this.set(this.KEYS.ENGLISH, d);
+    } else {
+      // 兼容老数据
+      if (!d.goal) d.goal = { name: '上海海事大学 MBA 备考', tag: '商务管理', totalWords: 200, dailyPush: 20 };
+      if (!d.wordStatus) d.wordStatus = {};
+      if (typeof d.weekCheckin !== 'number') d.weekCheckin = 7;
+    }
     return d;
   },
   addEnglishRecord: function(data) {
@@ -1076,6 +726,45 @@ const Storage = {
     var d = this.getEnglishData();
     d.records = d.records.filter(function(r) { return r.id !== id; });
     this.set(this.KEYS.ENGLISH, d);
+  },
+  saveEnglishGoal: function(goal) {
+    var d = this.getEnglishData();
+    d.goal = Object.assign({}, d.goal, goal);
+    this.set(this.KEYS.ENGLISH, d);
+  },
+  setEnglishWordStatus: function(word, status) {
+    var d = this.getEnglishData();
+    if (status) {
+      d.wordStatus[word] = { status: status, updatedAt: this.now() };
+    } else {
+      delete d.wordStatus[word];
+    }
+    this.set(this.KEYS.ENGLISH, d);
+  },
+  getEnglishWordStatus: function(word) {
+    var d = this.getEnglishData();
+    return (d.wordStatus && d.wordStatus[word]) ? d.wordStatus[word].status : null;
+  },
+  getEnglishWeekCheckin: function() {
+    var d = this.getEnglishData();
+    var now = new Date();
+    var start = new Date(now);
+    start.setDate(now.getDate() - now.getDay());
+    start.setHours(0, 0, 0, 0);
+    var end = new Date(start);
+    end.setDate(start.getDate() + 7);
+    var dates = {};
+    d.records.forEach(function(r) { dates[r.date] = true; });
+    var count = 0;
+    for (var day = new Date(start); day < end; day.setDate(day.getDate() + 1)) {
+      var ds = this.formatDate(day);
+      if (dates[ds]) count++;
+    }
+    return count;
+  },
+  getEnglishOralCount: function() {
+    var d = this.getEnglishData();
+    return d.records.filter(function(r) { return r.type === '口语练习'; }).length;
   },
   getEnglishTodayMinutes: function() {
     var today = this.today();
@@ -1296,6 +985,175 @@ const Storage = {
     }
     all.lastDate = date;
     this.set(this.KEYS.DAILY_WHY, all);
+  },
+
+  // ===== 工时统计 =====
+  getMonthData: function(yearMonth) {
+    var all = this.get(this.KEYS.WORK_HOUR) || {};
+    if (!all[yearMonth]) {
+      all[yearMonth] = { days: {}, settled: false, lastSettleDate: '' };
+      this.set(this.KEYS.WORK_HOUR, all);
+    }
+    return all[yearMonth];
+  },
+  _saveMonthData: function(yearMonth, data) {
+    var all = this.get(this.KEYS.WORK_HOUR) || {};
+    all[yearMonth] = data;
+    this.set(this.KEYS.WORK_HOUR, all);
+  },
+  addClockRecord: function(date, clockIn, clockOut, note) {
+    var ym = date.substring(0, 7);
+    var data = this.getMonthData(ym);
+    if (!data.days[date]) data.days[date] = { type: 'workday', clockIn: '', clockOut: '', directHours: null, effectiveHours: 0, settled: false, note: '', isTrip: false };
+    data.days[date].clockIn = clockIn;
+    data.days[date].clockOut = clockOut;
+    data.days[date].note = note || '';
+    data.days[date].effectiveHours = this._calcEffectiveHours(clockIn, clockOut);
+    this._saveMonthData(ym, data);
+  },
+  setDirectHours: function(date, hours, note) {
+    var ym = date.substring(0, 7);
+    var data = this.getMonthData(ym);
+    if (!data.days[date]) data.days[date] = { type: 'workday', clockIn: '', clockOut: '', directHours: null, effectiveHours: 0, settled: false, note: '', isTrip: false };
+    data.days[date].directHours = parseFloat(hours);
+    data.days[date].effectiveHours = parseFloat(hours);
+    data.days[date].note = note || '';
+    this._saveMonthData(ym, data);
+  },
+  toggleTripDay: function(date) {
+    var ym = date.substring(0, 7);
+    var data = this.getMonthData(ym);
+    if (!data.days[date]) data.days[date] = { type: 'workday', clockIn: '', clockOut: '', directHours: null, effectiveHours: 0, settled: false, note: '', isTrip: false };
+    data.days[date].isTrip = !data.days[date].isTrip;
+    this._saveMonthData(ym, data);
+    return data.days[date].isTrip;
+  },
+  deleteClockRecord: function(date) {
+    var ym = date.substring(0, 7);
+    var data = this.getMonthData(ym);
+    delete data.days[date];
+    this._saveMonthData(ym, data);
+  },
+  _calcEffectiveHours: function(clockIn, clockOut) {
+    if (!clockIn || !clockOut) return 0;
+    var inParts = clockIn.split(':');
+    var outParts = clockOut.split(':');
+    var inMin = parseInt(inParts[0]) * 60 + parseInt(inParts[1]);
+    var outMin = parseInt(outParts[0]) * 60 + parseInt(outParts[1]);
+    var diff = outMin - inMin;
+    if (diff < 0) diff += 24 * 60; // overnight
+    // Subtract 1 hour lunch break if > 6 hours
+    if (diff > 360) diff -= 60;
+    return Math.round(diff / 60 * 10) / 10;
+  },
+  getMonthSummary: function(yearMonth) {
+    var data = this.getMonthData(yearMonth);
+    var days = Object.keys(data.days).sort();
+    var totalHours = 0;
+    var workDays = 0;
+    var tripDays = 0;
+    var records = [];
+    days.forEach(function(date) {
+      var d = data.days[date];
+      totalHours += d.effectiveHours || 0;
+      if (d.effectiveHours > 0) workDays++;
+      if (d.isTrip) tripDays++;
+      records.push({ date: date, data: d });
+    });
+    var expectedHours = workDays * 8;
+    var overtime = Math.max(0, totalHours - expectedHours);
+    return {
+      totalHours: Math.round(totalHours * 10) / 10,
+      workDays: workDays,
+      tripDays: tripDays,
+      expectedHours: expectedHours,
+      overtime: Math.round(overtime * 10) / 10,
+      records: records,
+      settled: data.settled
+    };
+  },
+  settleDay: function(date) {
+    var ym = date.substring(0, 7);
+    var data = this.getMonthData(ym);
+    if (data.days[date]) {
+      data.days[date].settled = true;
+      // Auto-earn comp time for overtime
+      var hours = data.days[date].effectiveHours || 0;
+      if (hours > 8) {
+        this.addCompTransaction(date, 'earn', hours - 8, '当日加班自动转调休');
+      }
+      this._saveMonthData(ym, data);
+    }
+  },
+  settleMonth: function(yearMonth) {
+    var data = this.getMonthData(yearMonth);
+    var self = this;
+    Object.keys(data.days).forEach(function(date) {
+      if (!data.days[date].settled) {
+        data.days[date].settled = true;
+        var hours = data.days[date].effectiveHours || 0;
+        if (hours > 8) {
+          self.addCompTransaction(date, 'earn', hours - 8, '月度结算加班转调休');
+        }
+      }
+    });
+    data.settled = true;
+    data.lastSettleDate = this.today();
+    this._saveMonthData(yearMonth, data);
+  },
+  resetMonth: function(yearMonth) {
+    var data = { days: {}, settled: false, lastSettleDate: '' };
+    this._saveMonthData(yearMonth, data);
+  },
+  exportLedger: function(yearMonth) {
+    var summary = this.getMonthSummary(yearMonth);
+    if (summary.records.length === 0) return '当月暂无打卡记录';
+    var lines = [];
+    lines.push('=== 工时台账 ' + yearMonth + ' ===');
+    lines.push('导出时间: ' + this.now());
+    lines.push('工作天数: ' + summary.workDays + ' 天');
+    lines.push('出差天数: ' + summary.tripDays + ' 天');
+    lines.push('总工时: ' + summary.totalHours + ' 小时');
+    lines.push('应出勤: ' + summary.expectedHours + ' 小时');
+    lines.push('加班: ' + summary.overtime + ' 小时');
+    lines.push('');
+    lines.push('日期        上班    下班    直接工时  有效工时  出差  结算  备注');
+    lines.push('----------  ------  ------  --------  --------  ----  ----  ----');
+    summary.records.forEach(function(r) {
+      var d = r.data;
+      var line = r.date + '  ' +
+        (d.clockIn || '--').padEnd(6, ' ') + '  ' +
+        (d.clockOut || '--').padEnd(6, ' ') + '  ' +
+        (d.directHours !== null ? String(d.directHours) : '--').padEnd(8, ' ') + '  ' +
+        String(d.effectiveHours || 0).padEnd(8, ' ') + '  ' +
+        (d.isTrip ? '是' : '否').padEnd(4, ' ') + '  ' +
+        (d.settled ? '已结' : '未结') + '  ' +
+        (d.note || '');
+      lines.push(line);
+    });
+    return lines.join('\n');
+  },
+
+  // ===== 调休流水 =====
+  getCompTime: function() {
+    return this.get(this.KEYS.COMP_TIME) || { balance: 0, transactions: [] };
+  },
+  addCompTransaction: function(date, type, amount, note) {
+    var ct = this.getCompTime();
+    ct.transactions.push({
+      id: this._genId(), date: date, type: type,
+      amount: parseFloat(amount) || 0, note: note || '', createdAt: this.now()
+    });
+    if (type === 'earn') ct.balance += parseFloat(amount) || 0;
+    else ct.balance -= parseFloat(amount) || 0;
+    ct.balance = Math.round(ct.balance * 10) / 10;
+    this.set(this.KEYS.COMP_TIME, ct);
+  },
+  useCompTime: function(date, hours, note) {
+    var ct = this.getCompTime();
+    if (ct.balance < hours) return false;
+    this.addCompTransaction(date, 'use', hours, note || '调休使用');
+    return true;
   },
 
   // ===== 工具 =====
