@@ -112,30 +112,6 @@ var Scheduler = {
         }
       },
       {
-        id: 'daily_workhour_settle',
-        name: '每日工时结算',
-        schedule: { type: 'daily', time: '23:55' },
-        lastRun: null,
-        action: function() {
-          var today = Storage.today();
-          var result = Storage.settleDay(today);
-          var msg = '';
-          if (result.settled) {
-            msg = '工时结算: ' + result.message + ' | 调休余额: ' + result.newBalance.toFixed(2) + 'h';
-            if (result.warning) {
-              msg += ' [调休余额不足!]';
-              if (typeof App !== 'undefined' && App.showAlert) {
-                App.showAlert('调休余额不足! 当前余额: ' + result.newBalance.toFixed(2) + 'h');
-              }
-            }
-          } else {
-            msg = '今日无待结算打卡记录';
-          }
-          Storage.addSchedulerLog('每日工时结算', 'success', msg);
-          return msg;
-        }
-      },
-      {
         id: 'daily_news_fetch',
         name: '每日资讯拉取',
         schedule: { type: 'daily', time: '08:00' },
@@ -149,6 +125,26 @@ var Scheduler = {
           }
           Storage.addSchedulerLog('每日资讯拉取', 'success', 'App未打开，将在打开时自动获取');
           return 'App未打开，将在打开时自动获取';
+        }
+      },
+      {
+        id: 'daily_work_settle',
+        name: '每日工时结算',
+        schedule: { type: 'daily', time: '23:55' },
+        lastRun: null,
+        action: function() {
+          var today = Storage.today();
+          var ym = today.substring(0, 7);
+          var summary = Storage.getMonthSummary(ym);
+          var settledCount = 0;
+          summary.records.forEach(function(r) {
+            if (!r.data.settled && r.date === today) {
+              Storage.settleDay(today);
+              settledCount = 1;
+            }
+          });
+          Storage.addSchedulerLog('每日工时结算', 'success', '结算 ' + today + ' (' + settledCount + '条)');
+          return '每日工时结算完成: ' + today + ' (' + settledCount + '条)';
         }
       }
     ];
