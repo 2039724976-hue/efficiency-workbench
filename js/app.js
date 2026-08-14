@@ -5,7 +5,7 @@ var App = {
   pcRightBottomTab: 'reading',
   windows: [
     { id: 'dailyPlan', icon: '\u{1F4CB}', label: '\u6BCF\u65E5\u8BA1\u5212', group: 'left' },
-    { id: 'workHours', icon: '\u23F0', label: '\u5DE5\u65F6\u7EDF\u8BA1', group: 'rightTop' },
+    { id: 'workHours', icon: '\u{1F552}', label: '\u5DE5\u65F6\u7EDF\u8BA1', group: 'rightTop' },
     { id: 'news', icon: '\u{1F4F0}', label: '\u65F6\u653F\u70ED\u70B9', group: 'rightTop' },
     { id: 'english', icon: '\u{1F524}', label: '\u82F1\u8BED\u5B66\u4E60', group: 'rightTop' },
     { id: 'historyToday', icon: '\u{1F4DC}', label: '历史今天', group: 'rightTop' },
@@ -94,8 +94,8 @@ var App = {
   _getWindowHTML: function(id) {
     switch (id) {
       case 'dailyPlan': return this.renderDailyPlan();
-      case 'workHours': return this.renderWorkHours();
 
+      case 'workHours': return this.renderWorkHours();
       case 'news': return this.renderNews();
       case 'english': return this.renderEnglish();
       case 'reading': return this.renderReading();
@@ -350,15 +350,6 @@ var App = {
     h += '<div class="cmd-quick-btn" style="background:#EDE5FA;color:#7B5DB0;" onclick="App.quickFill(\'/\u6E05\u7A7A\u5DF2\u5B8C\u6210\')"><span style="font-size:24px;">\u{1F5D1}\uFE0F</span>\u6E05\u7A7A\u5DF2\u5B8C\u6210</div>';
     h += '<div class="cmd-quick-btn" style="background:#FFE8CC;color:#B07020;" onclick="App.quickFill(\'\u652F\u51FA \')"><span style="font-size:24px;">\u{1F4B0}</span>\u8BB0\u4E00\u7B14\u8D26</div>';
     h += '</div>';
-    // \u5DE5\u65F6\u6307\u4EE4\u5FEB\u6377\u6309\u94AE
-    h += '<div class="cmd-quick-actions">';
-    h += '<div class="cmd-quick-btn" style="background:#E8F4FD;color:#5BA4E5;" onclick="App.quickFill(\'/\u6253\u5361\')"><span style="font-size:24px;">\u{1F4CD}</span>\u6253\u5361</div>';
-    h += '<div class="cmd-quick-btn" style="background:#D4F5DC;color:#2A8B3A;" onclick="App.quickFill(\'/\u5F53\u65E5\u5DE5\u65F6\')"><span style="font-size:24px;">\u{1F4D0}</span>\u5F53\u65E5\u5DE5\u65F6</div>';
-    h += '<div class="cmd-quick-btn" style="background:#FFDDE1;color:#C44A52;" onclick="App.quickFill(\'/\u8C03\u4F11\u4F7F\u7528\')"><span style="font-size:24px;">\u{1F4AC}</span>\u8C03\u4F11\u4F7F\u7528</div>';
-    h += '<div class="cmd-quick-btn" style="background:#FFF3B0;color:#8A6D00;" onclick="App.quickFill(\'/\u6708\u5EA6\u7ED3\u7B97\')"><span style="font-size:24px;">\u{1F504}</span>\u6708\u5EA6\u7ED3\u7B97</div>';
-    h += '<div class="cmd-quick-btn" style="background:#FFDDE1;color:#C44A52;" onclick="App.quickFill(\'/\u91CD\u7F6E\u5F53\u6708\')"><span style="font-size:24px;">\u{1F5D1}\uFE0F</span>\u91CD\u7F6E\u5F53\u6708</div>';
-    h += '<div class="cmd-quick-btn" style="background:#EDE5FA;color:#7B5DB0;" onclick="App.quickFill(\'/\u5BFC\u51FA\u53F0\u8D26\')"><span style="font-size:24px;">\u{1F4E4}</span>\u5BFC\u51FA\u53F0\u8D26</div>';
-    h += '</div>';
     // \u65F6\u653F\u70ED\u70B9\u6307\u4EE4\u5FEB\u6377\u6309\u94AE
     h += '<div class="cmd-quick-actions">';
     h += '<div class="cmd-quick-btn" style="background:#E8F4FD;color:#5BA4E5;" onclick="App.quickFill(\'/\u4ECA\u65E5\u7B80\u62A5\')"><span style="font-size:24px;">\u{1F4F0}</span>\u4ECA\u65E5\u7B80\u62A5</div>';
@@ -367,6 +358,15 @@ var App = {
     h += '<div class="cmd-quick-btn" style="background:#D4F5DC;color:#2A8B3A;" onclick="App.quickFill(\'/\u540C\u6B65\u7075\u611F\')"><span style="font-size:24px;">\u{1F4A1}</span>\u540C\u6B65\u7075\u611F</div>';
     h += '<div class="cmd-quick-btn" style="background:#FFDDE1;color:#C44A52;" onclick="App.quickFill(\'/\u5BFC\u51FA\u884C\u4E1A\u89C2\u70B9\')"><span style="font-size:24px;">\u{1F4E4}</span>\u5BFC\u51FA\u89C2\u70B9</div>';
     h += '</div>';
+    // 工时统计指令快捷按钮
+    h += '<div class="cmd-quick-actions">';
+    h += '<div class="cmd-quick-btn" style="background:#E8F4FD;color:#3B8BCC;" onclick="App.quickFill(\'/\u6253\u5361\')"><span style="font-size:24px;">\u{1F4CD}</span>\u6253\u5361</div>';
+    h += '<div class="cmd-quick-btn" style="background:#FFF3B0;color:#8A6D00;" onclick="App.quickFill(\'/\u5F55\u5DE5\u65F6\')"><span style="font-size:24px;">\u{1F4DD}</span>\u5F55\u5DE5\u65F6</div>';
+    h += '<div class="cmd-quick-btn" style="background:#D4F5DC;color:#2A8B3A;" onclick="App.quickFill(\'/\u8C03\u4F11\')"><span style="font-size:24px;">\u{1F3C4}</span>\u8C03\u4F11</div>';
+    h += '<div class="cmd-quick-btn" style="background:#FFB347;color:#fff;" onclick="App.quickFill(\'/\u51FA\u5DEE\')"><span style="font-size:24px;">\u2708\uFE0F</span>\u51FA\u5DEE</div>';
+    h += '<div class="cmd-quick-btn" style="background:#FFDDE1;color:#C44A52;" onclick="App.quickFill(\'/\u6708\u7ED3\')"><span style="font-size:24px;">\u{1F4CB}</span>\u6708\u7ED3</div>';
+    h += '<div class="cmd-quick-btn" style="background:#EDE5FA;color:#7B5DB0;" onclick="App.quickFill(\'/\u5BFC\u51FA\u53F0\u8D26\')"><span style="font-size:24px;">\u{1F4E4}</span>\u5BFC\u51FA\u53F0\u8D26</div>';
+    h += '</div>';
     // \u6307\u4EE4\u683C\u5F0F\u8BF4\u660E
     h += '<div class="card"><div class="card-title">\u{1F4D6} \u6307\u4EE4\u683C\u5F0F</div><div style="font-size:15px;line-height:2;color:#888;">';
     h += '<b style="color:#5BA4E5;">\u8BA1\u5212\u6307\u4EE4</b><br>';
@@ -374,19 +374,19 @@ var App = {
     h += '/顺延待办 \u2014 \u624B\u52A8\u89E6\u53D1\u987A\u5EF6\u903B\u8F91<br>';
     h += '/新增任务 [标题] \u2014 \u5FEB\u901F\u65B0\u589E\u4ECA\u65E5\u5F85\u529E<br>';
     h += '/清空已完成 \u2014 \u6E05\u9664\u4ECA\u65E5\u5DF2\u5B8C\u6210\u4EFB\u52A1<br><br>';
-    h += '<b style="color:#FF9AA2;">\u5DE5\u65F6\u6307\u4EE4</b><br>';
-    h += '/打卡 \u2014 \u65F6\u95F4\u6BB5\u6253\u5361\u5F55\u5165<br>';
-    h += '/当日工时 \u2014 \u76F4\u63A5\u586B\u5199\u5F53\u65E5\u6709\u6548\u5DE5\u65F6<br>';
-    h += '/调休使用 \u2014 \u767B\u8BB0\u6D88\u8017\u8C03\u4F11<br>';
-    h += '/月度结算 \u2014 \u6267\u884C\u5F53\u6708\u5DE5\u65F6\u7ED3\u7B97<br>';
-    h += '/重置当月 \u2014 \u6E05\u7A7A\u5F53\u6708\u6253\u5361\u6570\u636E<br>';
-    h += '/导出台账 \u2014 \u8F93\u51FA\u53EF\u590D\u5236Excel\u683C\u5F0F\u53F0\u8D26<br><br>';
     h += '<b style="color:#FFB347;">\u8D44\u8BAF\u6307\u4EE4</b><br>';
     h += '/今日简报 \u2014 \u624B\u52A8\u751F\u6210\u5F53\u65E5\u8D44\u8BAF\u7B80\u62A5<br>';
     h += '/本周汇总 \u2014 \u751F\u6210\u672C\u5468\u8D44\u8BAF\u6C47\u603B<br>';
     h += '/收藏热点 \u2014 \u67E5\u770B\u6536\u85CF\u5E93<br>';
     h += '/同步灵感 \u2014 \u63D0\u793A\u540C\u6B65\u70ED\u70B9\u611F\u609F<br>';
     h += '/导出行业观点 \u2014 \u5BFC\u51FA\u6536\u85CF\u884C\u4E1A\u89C2\u70B9\u6587\u672C<br><br>';
+    h += '<b style="color:#4ECCA3;">\u5DE5\u65F6\u6307\u4EE4</b><br>';
+    h += '/打卡 \u2014 \u8BB0\u5F55\u4E0A\u4E0B\u73ED\u65F6\u95F4<br>';
+    h += '/录工时 \u2014 \u76F4\u63A5\u8F93\u5165\u5DE5\u65F6\u6570<br>';
+    h += '/调休 \u2014 \u4F7F\u7528\u8C03\u4F11\u4F59\u989D<br>';
+    h += '/出差 \u2014 \u6807\u8BB0/\u53D6\u6D88\u4ECA\u65E5\u51FA\u5DEE<br>';
+    h += '/月结 \u2014 \u6708\u5EA6\u5DE5\u65F6\u7ED3\u7B97<br>';
+    h += '/导出台账 \u2014 \u5BFC\u51FA\u672C\u6708\u5DE5\u65F6\u53F0\u8D26<br><br>';
     h += '<b style="color:#5BA4E5;">\u5176\u4ED6\u6307\u4EE4</b><br>';
     h += '\u8BA1\u5212 [\u5185\u5BB9] \u2014 \u6DFB\u52A0\u5230\u4ECA\u65E5\u8BA1\u5212<br>';
     h += '\u652F\u51FA [\u7C7B\u522B] [\u91D1\u989D] [\u63CF\u8FF0] \u2014 \u8BB0\u8D26<br>';
@@ -445,39 +445,6 @@ var App = {
     if (type === '/\u6E05\u7A7A\u5DF2\u5B8C\u6210') {
       var n = Storage.clearCompletedPlanTodos(Storage.today());
       return n > 0 ? '\u2705 \u5DF2\u6E05\u9664' + n + '\u6761\u5DF2\u5B8C\u6210\u4EFB\u52A1' : '\u6CA1\u6709\u5DF2\u5B8C\u6210\u7684\u4EFB\u52A1';
-    }
-    // ===== \u5DE5\u65F6\u6307\u4EE4 =====
-    if (type === '/\u6253\u5361') {
-      this.switchWindow('workHours');
-      this.showClockInModal();
-      return '\u{1F4CD} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u6253\u5361\u65F6\u95F4';
-    }
-    if (type === '/\u5F53\u65E5\u5DE5\u65F6') {
-      this.switchWindow('workHours');
-      this.showDirectHoursModal();
-      return '\u{1F4D0} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u5DE5\u65F6';
-    }
-    if (type === '/\u8C03\u4F11\u4F7F\u7528') {
-      this.switchWindow('workHours');
-      this.showCompUseModal();
-      return '\u{1F4AC} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u8C03\u4F11\u4F7F\u7528';
-    }
-    if (type === '/\u6708\u5EA6\u7ED3\u7B97') {
-      this.switchWindow('workHours');
-      var sResult = Storage.settleMonth(Storage.getMonthKey(new Date()));
-      var sMsg = '\u2705 \u7ED3\u7B97' + sResult.count + '\u6761 | \u8C03\u4F11\u4F59\u989D: ' + sResult.balance.toFixed(2) + 'h';
-      if (sResult.warning) sMsg = '\u26A0\uFE0F \u8C03\u4F11\u4E0D\u8DB3! ' + sMsg;
-      return sMsg;
-    }
-    if (type === '/\u91CD\u7F6E\u5F53\u6708') {
-      this.switchWindow('workHours');
-      this.confirmResetMonth();
-      return '\u8BF7\u786E\u8BA4\u91CD\u7F6E\u64CD\u4F5C';
-    }
-    if (type === '/\u5BFC\u51FA\u53F0\u8D26') {
-      this.switchWindow('workHours');
-      this.doExportLedger();
-      return '\u{1F4E4} \u53F0\u8D26\u5DF2\u751F\u6210';
     }
     // ===== \u65F6\u653F\u70ED\u70B9\u6307\u4EE4 =====
     if (type === '/\u4ECA\u65E5\u7B80\u62A5') {
@@ -539,7 +506,41 @@ var App = {
       this.switchWindow('dailyWhy');
       return '❓ 已切换到每天为什么';
     }
-    // ===== \u539F\u6709\u6307\u4EE4 =====
+    // ===== 工时统计指令 =====
+    if (type === '/打卡') {
+      this.switchWindow('workHours');
+      this.showClockInModal();
+      return '\u{1F4CD} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u6253\u5361\u65F6\u95F4';
+    }
+    if (type === '/录工时') {
+      this.switchWindow('workHours');
+      this.showDirectHoursModal();
+      return '\u{1F4DD} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u5DE5\u65F6';
+    }
+    if (type === '/调休') {
+      this.switchWindow('workHours');
+      this.showCompUseModal();
+      return '\u{1F3C4} \u8BF7\u5728\u5F39\u7A97\u4E2D\u586B\u5199\u8C03\u4F11\u4FE1\u606F';
+    }
+    if (type === '/出差') {
+      var today = Storage.today();
+      var isTrip = Storage.toggleTripDay(today);
+      this.switchWindow('workHours');
+      return isTrip ? '\u2708\uFE0F \u4ECA\u65E5\u5DF2\u6807\u8BB0\u4E3A\u51FA\u5DEE' : '\u5DF2\u53D6\u6D88\u4ECA\u65E5\u51FA\u5DEE\u6807\u8BB0';
+    }
+    if (type === '/月结') {
+      this.switchWindow('workHours');
+      var ym = Storage.today().substring(0, 7);
+      Storage.settleMonth(ym);
+      this.render();
+      return '\u2705 \u6708\u5EA6\u5DF2\u7ED3\u7B97';
+    }
+    if (type === '/导出台账') {
+      this.switchWindow('workHours');
+      this.exportLedger();
+      return '\u{1F4E4} \u53F0\u8D26\u5BFC\u51FA\u4E2D';
+    }
+    // ===== 原有指令 =====
     if (type === '\u8BA1\u5212' || type === 'plan') {
       if (!rest) return '\u26A0\uFE0F \u8BF7\u8F93\u5165\u8BA1\u5212\u5185\u5BB9';
       Storage.addDailyTask(Storage.today(), rest);
@@ -574,7 +575,7 @@ var App = {
       Storage.addProject({ name: rest });
       return '\u2705 \u5DF2\u6DFB\u52A0\u9879\u76EE: ' + rest;
     }
-    return '\u26A0\uFE0F \u672A\u77E5\u6307\u4EE4: ' + type + '\u3002\u53EF\u7528: /今日规划 /顺延待办 /打卡 /当日工时 /调休使用 /月度结算 /导出台账';
+    return '\u26A0\uFE0F \u672A\u77E5\u6307\u4EE4: ' + type + '。可用: /今日规划 /顺延待办 /新增任务 /清空已完成';
   },
   // ===== Window 3: Task Ledger =====
   renderTaskLedger: function() {
@@ -662,228 +663,6 @@ var App = {
     this.closeModal(); this.render(); this.showToast('\u2705 \u5DF2\u8BB0\u8D26');
   },
   deleteExpense: function(id) { Storage.deleteExpense(id); this.render(); this.showToast('\u5DF2\u5220\u9664'); },
-  // ===== Window: Work Hours (工时统计) =====
-  renderWorkHours: function() {
-    var today = Storage.today();
-    var monthKey = Storage.getMonthKey(new Date());
-    var md = Storage.getMonthData(monthKey);
-    var ct = Storage.getCompTime();
-    var summary = Storage.getMonthSummary(monthKey);
-    var h = '<div class="window-header"><div class="window-title">\u23F0 \u5DE5\u65F6\u7EDF\u8BA1</div>';
-    h += '<div style="display:flex;gap:6px;">';
-    h += '<button class="btn-icon-sm" onclick="App.showClockInModal()" title="\u6253\u5361">\u{1F4CD}</button>';
-    h += '<button class="btn-icon-sm" onclick="App.showDirectHoursModal()" title="\u5F53\u65E5\u5DE5\u65F6">\u{1F4D0}</button>';
-    h += '<button class="btn-icon-sm" onclick="App.showCompUseModal()" title="\u8C03\u4F11\u4F7F\u7528">\u{1F4AC}</button>';
-    h += '</div></div>';
-    // 调休余额预警
-    if (ct.currentBalance < 0) {
-      h += '<div class="wh-alert">\u26A0\uFE0F \u8C03\u4F11\u4F59\u989D\u4E0D\u8DB3\uFF01\u5F53\u524D\u4F59\u989D: ' + ct.currentBalance.toFixed(2) + 'h</div>';
-    } else if (ct.currentBalance < 8) {
-      h += '<div class="wh-warning">\u26A0\uFE0F \u8C03\u4F11\u4F59\u989D\u504F\u4F4E: ' + ct.currentBalance.toFixed(2) + 'h</div>';
-    }
-    // 统计卡片
-    h += '<div class="stat-grid">';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F4AC}</div><div class="stat-value">' + ct.currentBalance.toFixed(1) + 'h</div><div class="stat-label">\u8C03\u4F11\u4F59\u989D</div></div>';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F4C5}</div><div class="stat-value">' + md.workdays + '\u5929</div><div class="stat-label">\u5E94\u51FA\u52E4\u5929\u6570</div></div>';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F4CB}</div><div class="stat-value">' + summary.clockDays + '\u5929</div><div class="stat-label">\u5DF2\u6253\u5361\u5929\u6570</div></div>';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F550}</div><div class="stat-value">' + summary.totalEffective.toFixed(1) + 'h</div><div class="stat-label">\u6709\u6548\u5DE5\u65F6</div></div>';
-    h += '</div>';
-    // 月度汇总
-    h += '<div class="card"><div class="card-title">\u{1F4CA} ' + monthKey + ' \u6708\u5EA6\u6C47\u603B</div>';
-    h += '<div class="wh-summary-grid">';
-    h += '<div class="wh-summary-item"><span class="wh-summary-label">\u6807\u51C6\u5DE5\u65F6</span><span class="wh-summary-value">' + summary.standardHours + 'h</span></div>';
-    h += '<div class="wh-summary-item"><span class="wh-summary-label">\u6709\u6548\u5DE5\u65F6</span><span class="wh-summary-value">' + summary.totalEffective.toFixed(1) + 'h</span></div>';
-    h += '<div class="wh-summary-item"><span class="wh-summary-label">\u52A0\u73ED\u65F6\u957F</span><span class="wh-summary-value" style="color:#2A8B3A;">+' + summary.totalOvertime.toFixed(1) + 'h</span></div>';
-    h += '<div class="wh-summary-item"><span class="wh-summary-label">\u5DE5\u65F6\u7F3A\u53E3</span><span class="wh-summary-value" style="color:#C44A52;">-' + summary.totalDeficit.toFixed(1) + 'h</span></div>';
-    h += '</div>';
-    h += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">';
-    h += '<button class="btn btn-sm btn-outline" onclick="App.showWorkdaysModal()">\u{1F4C5} \u4FEE\u6539\u5E94\u51FA\u52E4</button>';
-    h += '<button class="btn btn-sm btn-yellow" onclick="App.doMonthSettle()">\u{1F504} \u6708\u5EA6\u7ED3\u7B97</button>';
-    h += '<button class="btn btn-sm btn-outline" onclick="App.doExportLedger()">\u{1F4E4} \u5BFC\u51FA\u53F0\u8D26</button>';
-    h += '<button class="btn btn-sm btn-danger" onclick="App.confirmResetMonth()">\u{1F5D1}\uFE0F \u91CD\u7F6E\u5F53\u6708</button>';
-    h += '</div></div>';
-    // 打卡明细表
-    h += '<div class="card"><div class="card-title">\u{1F4CB} \u6253\u5361\u660E\u7EC6</div>';
-    if (md.records.length === 0) {
-      h += '<div class="empty-state-sm"><div class="empty-text">\u672C\u6708\u8FD8\u6CA1\u6709\u6253\u5361\u8BB0\u5F55<br>\u70B9\u51FB\u53F3\u4E0A\u89D2\u6253\u5361\u6216\u586B\u5199\u5DE5\u65F6</div></div>';
-    } else {
-      h += '<div class="table-wrap"><table class="data-table wh-table"><thead><tr><th>\u65E5\u671F</th><th>\u7C7B\u578B</th><th>\u6253\u5361</th><th>\u5DE5\u65F6</th><th>\u72B6\u6001</th><th>\u64CD\u4F5C</th></tr></thead><tbody>';
-      var self = this;
-      md.records.slice().reverse().forEach(function(r) {
-        var dt = r.dayType === 'workday' ? '<span class="tag tag-blue">\u5DE5\u4F5C\u65E5</span>' : r.dayType === 'weekend' ? '<span class="tag tag-lavender">\u5468\u672B</span>' : '<span class="tag tag-pink">\u8282\u5047\u65E5</span>';
-        var clk = r.clockIn && r.clockOut ? r.clockIn + '-' + r.clockOut : '<span style="color:#B0B0B0;">\u76F4\u63A5\u586B\u5199</span>';
-        var stl = r.settled ? '<span class="tag tag-mint">\u5DF2\u7ED3\u7B97</span>' : '<span class="tag tag-yellow">\u672A\u7ED3\u7B97</span>';
-        h += '<tr><td>' + r.date + '</td><td>' + dt + '</td><td>' + clk + '</td>';
-        h += '<td style="font-weight:700;">' + r.effectiveHours + 'h</td><td>' + stl + '</td>';
-        h += '<td><button class="btn btn-sm btn-danger" onclick="App.deleteClockRecord(\'' + r.date + '\')">\u5220\u9664</button></td></tr>';
-      });
-      h += '</tbody></table></div>';
-    }
-    h += '</div>';
-    // 调休流水
-    h += '<div class="card"><div class="card-title">\u{1F4AC} \u8C03\u4F11\u6D41\u6C34</div>';
-    var monthTxns = ct.transactions.filter(function(t) { return t.date.startsWith(monthKey); });
-    if (monthTxns.length === 0) {
-      h += '<div class="empty-state-sm"><div class="empty-text">\u672C\u6708\u65E0\u8C03\u4F11\u6D41\u6C34</div></div>';
-    } else {
-      h += '<div class="table-wrap"><table class="data-table wh-table"><thead><tr><th>\u65E5\u671F</th><th>\u7C7B\u578B</th><th>\u65F6\u957F</th><th>\u4F59\u989D</th><th>\u539F\u56E0</th></tr></thead><tbody>';
-      monthTxns.slice().reverse().forEach(function(t) {
-        var tp = t.type === 'earn' ? '<span class="tag tag-mint">\u83B7\u5F97</span>' : '<span class="tag tag-pink">\u6D88\u8017</span>';
-        var hrs = t.type === 'earn' ? '+' + t.hours + 'h' : '-' + t.hours + 'h';
-        var color = t.type === 'earn' ? '#2A8B3A' : '#C44A52';
-        h += '<tr><td>' + t.date + '</td><td>' + tp + '</td>';
-        h += '<td style="font-weight:700;color:' + color + ';">' + hrs + '</td>';
-        h += '<td>' + t.balanceAfter.toFixed(2) + 'h</td>';
-        h += '<td>' + self._esc(t.reason) + '</td></tr>';
-      });
-      h += '</tbody></table></div>';
-    }
-    h += '</div>';
-    // 基础参数说明
-    h += '<div class="card"><div class="card-title">\u2139\uFE0F \u57FA\u7840\u53C2\u6570</div>';
-    h += '<div style="font-size:15px;line-height:2;color:#888;">';
-    h += '\u521D\u59CB\u8C03\u4F11\u5E93\u5B58: <b style="color:#5BA4E5;">' + ct.initialBalance.toFixed(2) + 'h</b><br>';
-    h += '\u6807\u51C6\u4F5C\u606F: <b>08:30-17:30</b> \u5348\u4F111h<br>';
-    h += '\u5DE5\u4F5C\u65E5\u57FA\u51C6: <b>8h/\u5929</b><br>';
-    h += '\u5DE5\u4F5C\u65E5\u8D85\u51FA8h\u2192\u8BA1\u5165\u8C03\u4F11<br>';
-    h += '\u5DE5\u4F5C\u65E5\u4E0D\u8DB38h\u2192\u6D88\u8017\u8C03\u4F11<br>';
-    h += '\u5468\u672B/\u8282\u5047\u65E5\u51FA\u52E4\u2192\u5168\u90E8\u8BA1\u5165\u8C03\u4F11</div></div>';
-    return h;
-  },
-  // 打卡弹窗
-  showClockInModal: function() {
-    var today = Storage.today();
-    var h = '<div class="modal-title">\u{1F4CD} \u65F6\u95F4\u6BB5\u6253\u5361</div><div class="modal-body">';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">\u65E5\u671F</label><input type="date" class="input-field" id="clkDate" value="' + today + '"></div>';
-    h += '<div style="display:flex;gap:10px;margin-bottom:12px;"><div style="flex:1;"><label class="modal-label">\u4E0A\u73ED\u6253\u5361</label><input type="time" class="input-field" id="clkIn" value="08:30"></div>';
-    h += '<div style="flex:1;"><label class="modal-label">\u4E0B\u73ED\u6253\u5361</label><input type="time" class="input-field" id="clkOut" value="17:30"></div></div>';
-    h += '<div id="clkPreview" style="padding:10px;background:#E8F4FD;border-radius:8px;margin-bottom:12px;font-size:16px;color:#5BA4E5;text-align:center;">\u6709\u6548\u5DE5\u65F6: 8.00h</div>';
-    h += '<div><label class="modal-label">\u5907\u6CE8</label><input type="text" class="input-field" id="clkNote" placeholder="\u53EF\u9009..."></div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">\u53D6\u6D88</button><button class="btn btn-primary" onclick="App.saveClockIn()">\u4FDD\u5B58</button></div>';
-    this.showModal(h);
-    var self = this;
-    setTimeout(function() {
-      var upd = function() {
-        var d = document.getElementById('clkDate').value;
-        var ci = document.getElementById('clkIn').value;
-        var co = document.getElementById('clkOut').value;
-        if (d && ci && co) {
-          var hrs = Storage._calcEffectiveHours(ci, co, d);
-          var pv = document.getElementById('clkPreview');
-          if (pv) pv.textContent = '\u6709\u6548\u5DE5\u65F6: ' + hrs + 'h';
-        }
-      };
-      ['clkDate','clkIn','clkOut'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('change', upd);
-      });
-    }, 100);
-  },
-  saveClockIn: function() {
-    var date = document.getElementById('clkDate').value;
-    var ci = document.getElementById('clkIn').value;
-    var co = document.getElementById('clkOut').value;
-    var note = document.getElementById('clkNote').value.trim();
-    if (!date || !ci || !co) { this.showToast('\u26A0\uFE0F \u8BF7\u586B\u5199\u65E5\u671F\u548C\u6253\u5361\u65F6\u95F4'); return; }
-    Storage.addClockRecord(date, ci, co, note);
-    this.closeModal(); this.render(); this.showToast('\u2705 \u6253\u5361\u5DF2\u4FDD\u5B58');
-  },
-  // 直接填写工时弹窗
-  showDirectHoursModal: function() {
-    var today = Storage.today();
-    var h = '<div class="modal-title">\u{1F4D0} \u586B\u5199\u5F53\u65E5\u5DE5\u65F6</div><div class="modal-body">';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">\u65E5\u671F</label><input type="date" class="input-field" id="dhDate" value="' + today + '"></div>';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">\u6709\u6548\u5DE5\u65F6 (\u5C0F\u65F6)</label><input type="number" class="input-field" id="dhHours" placeholder="8.0" step="0.25" value="8"></div>';
-    h += '<div><label class="modal-label">\u5907\u6CE8</label><input type="text" class="input-field" id="dhNote" placeholder="\u53EF\u9009..."></div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">\u53D6\u6D88</button><button class="btn btn-primary" onclick="App.saveDirectHours()">\u4FDD\u5B58</button></div>';
-    this.showModal(h);
-  },
-  saveDirectHours: function() {
-    var date = document.getElementById('dhDate').value;
-    var hours = parseFloat(document.getElementById('dhHours').value);
-    var note = document.getElementById('dhNote').value.trim();
-    if (!date || isNaN(hours) || hours < 0) { this.showToast('\u26A0\uFE0F \u8BF7\u586B\u5199\u6709\u6548\u6570\u636E'); return; }
-    Storage.setDirectHours(date, hours, note);
-    this.closeModal(); this.render(); this.showToast('\u2705 \u5DE5\u65F6\u5DF2\u4FDD\u5B58');
-  },
-  // 调休使用弹窗
-  showCompUseModal: function() {
-    var today = Storage.today();
-    var ct = Storage.getCompTime();
-    var h = '<div class="modal-title">\u{1F4AC} \u767B\u8BB0\u8C03\u4F11\u4F7F\u7528</div><div class="modal-body">';
-    h += '<div style="padding:10px;background:#E8F4FD;border-radius:8px;margin-bottom:12px;font-size:16px;color:#5BA4E5;text-align:center;">\u5F53\u524D\u8C03\u4F11\u4F59\u989D: ' + ct.currentBalance.toFixed(2) + 'h</div>';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">\u65E5\u671F</label><input type="date" class="input-field" id="cuDate" value="' + today + '"></div>';
-    h += '<div style="margin-bottom:12px;"><label class="modal-label">\u6D88\u8017\u65F6\u957F (\u5C0F\u65F6)</label><input type="number" class="input-field" id="cuHours" placeholder="4.0" step="0.25"></div>';
-    h += '<div><label class="modal-label">\u539F\u56E0</label><input type="text" class="input-field" id="cuReason" placeholder="\u5982: \u4E8B\u5047\u8C03\u4F11..."></div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">\u53D6\u6D88</button><button class="btn btn-primary" onclick="App.saveCompUse()">\u4FDD\u5B58</button></div>';
-    this.showModal(h);
-  },
-  saveCompUse: function() {
-    var date = document.getElementById('cuDate').value;
-    var hours = parseFloat(document.getElementById('cuHours').value);
-    var reason = document.getElementById('cuReason').value.trim();
-    if (!date || isNaN(hours) || hours <= 0) { this.showToast('\u26A0\uFE0F \u8BF7\u586B\u5199\u6709\u6548\u6570\u636E'); return; }
-    var newBalance = Storage.useCompTime(hours, reason, date);
-    this.closeModal(); this.render();
-    if (newBalance < 0) {
-      this.showToast('\u2705 \u5DF2\u767B\u8BB0 | \u26A0\uFE0F \u8C03\u4F11\u4F59\u989D\u4E0D\u8DB3! \u5F53\u524D: ' + newBalance.toFixed(2) + 'h');
-    } else {
-      this.showToast('\u2705 \u5DF2\u767B\u8BB0 | \u4F59\u989D: ' + newBalance.toFixed(2) + 'h');
-    }
-  },
-  // 修改应出勤天数弹窗
-  showWorkdaysModal: function() {
-    var monthKey = Storage.getMonthKey(new Date());
-    var md = Storage.getMonthData(monthKey);
-    var h = '<div class="modal-title">\u{1F4C5} \u4FEE\u6539\u5E94\u51FA\u52E4\u5929\u6570</div><div class="modal-body">';
-    h += '<div style="padding:10px;background:#FFF3B0;border-radius:8px;margin-bottom:12px;font-size:15px;color:#8A6D00;">\u5F53\u524D\u7CFB\u7EDF\u8BA1\u7B97: ' + md.workdays + '\u5929 (\u6807\u51C6\u5DE5\u65F6 ' + md.standardHours + 'h)\u3002\u5982\u8282\u5047\u65E5\u6570\u636E\u5F02\u5E38\uFF0C\u53EF\u624B\u52A8\u4FEE\u6539\u3002</div>';
-    h += '<div><label class="modal-label">\u5E94\u51FA\u52E4\u5DE5\u4F5C\u65E5\u5929\u6570</label><input type="number" class="input-field" id="wdInput" value="' + md.workdays + '" min="0" max="31"></div>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">\u53D6\u6D88</button><button class="btn btn-primary" onclick="App.saveWorkdays()">\u4FDD\u5B58</button></div>';
-    this.showModal(h);
-  },
-  saveWorkdays: function() {
-    var days = parseInt(document.getElementById('wdInput').value);
-    if (isNaN(days) || days < 0 || days > 31) { this.showToast('\u26A0\uFE0F \u8BF7\u8F93\u5165\u6709\u6548\u5929\u6570 (0-31)'); return; }
-    var monthKey = Storage.getMonthKey(new Date());
-    Storage.setManualWorkdays(monthKey, days);
-    this.closeModal(); this.render(); this.showToast('\u2705 \u5DF2\u4FEE\u6539\u4E3A ' + days + ' \u5929');
-  },
-  // 月度结算
-  doMonthSettle: function() {
-    var monthKey = Storage.getMonthKey(new Date());
-    var result = Storage.settleMonth(monthKey);
-    this.render();
-    var msg = '\u2705 \u6708\u5EA6\u7ED3\u7B97\u5B8C\u6210: \u7ED3\u7B97' + result.count + '\u6761\u8BB0\u5F55 | \u8C03\u4F11\u4F59\u989D: ' + result.balance.toFixed(2) + 'h';
-    if (result.warning) msg = '\u26A0\uFE0F \u8C03\u4F91\u4F59\u989D\u4E0D\u8DB3! ' + msg;
-    this.showToast(msg);
-  },
-  // 导出台账
-  doExportLedger: function() {
-    var monthKey = Storage.getMonthKey(new Date());
-    var text = Storage.exportLedger(monthKey);
-    var h = '<div class="modal-title">\u{1F4E4} \u5BFC\u51FA\u53F0\u8D26</div><div class="modal-body">';
-    h += '<textarea class="input-field" id="exportText" style="min-height:300px;font-family:monospace;font-size:14px;white-space:pre;" readonly>' + this._esc(text) + '</textarea>';
-    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">\u5173\u95ED</button><button class="btn btn-primary" onclick="App.copyExport()">\u590D\u5236</button></div>';
-    this.showModal(h);
-  },
-  copyExport: function() {
-    var ta = document.getElementById('exportText');
-    if (ta) { ta.select(); document.execCommand('copy'); this.showToast('\u2705 \u5DF2\u590D\u5236\u5230\u526A\u8D34\u677F'); }
-  },
-  // 重置当月
-  confirmResetMonth: function() {
-    var monthKey = Storage.getMonthKey(new Date());
-    var h = '<div class="modal-title" style="color:#FF9AA2;">\u26A0\uFE0F \u786E\u8BA4\u91CD\u7F6E ' + monthKey + ' \u6253\u5361\u6570\u636E\uFF1F</div>';
-    h += '<div class="modal-body" style="font-size:17px;line-height:1.6;">\u6B64\u64CD\u4F5C\u5C06\u6E05\u7A7A\u5F53\u6708\u6240\u6709\u6253\u5361\u8BB0\u5F55\uFF0C\u4E0D\u5F71\u54CD\u5386\u53F2\u6708\u4EFD\u548C\u8C03\u4F11\u6D41\u6C34\u3002</div>';
-    h += '<div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">\u53D6\u6D88</button><button class="btn btn-danger" onclick="App.doResetMonth()">\u786E\u8BA4\u91CD\u7F6E</button></div>';
-    this.showModal(h);
-  },
-  doResetMonth: function() {
-    var monthKey = Storage.getMonthKey(new Date());
-    Storage.resetMonth(monthKey);
-    this.closeModal(); this.render(); this.showToast('\u2705 \u5DF2\u91CD\u7F6E\u5F53\u6708\u6253\u5361\u6570\u636E');
-  },
-  deleteClockRecord: function(date) { Storage.deleteClockRecord(date); this.render(); this.showToast('\u5DF2\u5220\u9664'); },
   // ===== Window 5: Notes =====
   renderNotes: function() {
     var h = '<div class="window-header"><div class="window-title">\u{1F4CC} \u5907\u5FD8\u5F55</div><button class="btn btn-primary btn-sm" onclick="App.showNoteModal()">+ \u65B0\u5EFA</button></div>';
@@ -1118,6 +897,239 @@ var App = {
     this.closeModal(); this.render();
     if (result) this.showToast(result);
   },
+  // ===== Window: Work Hours (工时统计) =====
+  renderWorkHours: function() {
+    var today = Storage.today();
+    var ym = today.substring(0, 7);
+    var summary = Storage.getMonthSummary(ym);
+    var compTime = Storage.getCompTime();
+    var todayRec = null;
+    summary.records.forEach(function(r) { if (r.date === today) todayRec = r.data; });
+    var h = '';
+
+    h += '<div class="window-header"><div class="window-title">\u{1F552} \u5DE5\u65F6\u7EDF\u8BA1</div>';
+    h += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
+    h += '<button class="btn btn-primary btn-sm" onclick="App.showClockInModal()">\u{1F4CD} \u6253\u5361</button>';
+    h += '<button class="btn btn-sm" style="background:#FFF3B0;color:#8A6D00;" onclick="App.showDirectHoursModal()">\u{1F4DD} \u5F55\u5DE5\u65F6</button>';
+    h += '<button class="btn btn-sm" style="background:#D4F5DC;color:#2A8B3A;" onclick="App.showCompUseModal()">\u{1F3C4} \u8C03\u4F11</button>';
+    h += '<button class="btn btn-sm" style="background:#E8F4FD;color:#3B8BCC;" onclick="App.exportLedger()">\u{1F4E4} \u5BFC\u51FA</button>';
+    if (!summary.settled) {
+      h += '<button class="btn btn-sm" style="background:#FFDDE1;color:#C44A52;" onclick="App.settleMonth()">\u{1F4CB} \u6708\u7ED3</button>';
+    }
+    h += '</div></div>';
+
+    // 今日卡片
+    h += '<div class="card" style="margin-bottom:12px;">';
+    h += '<div class="card-title">\u{1F4C5} ' + today + ' \u4ECA\u65E5</div>';
+    if (todayRec) {
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">';
+      h += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+      if (todayRec.clockIn) h += '<span style="background:#E8F4FD;color:#3B8BCC;padding:4px 12px;border-radius:8px;font-weight:bold;">\u4E0A\u73ED ' + todayRec.clockIn + '</span>';
+      if (todayRec.clockOut) h += '<span style="background:#FFDDE1;color:#C44A52;padding:4px 12px;border-radius:8px;font-weight:bold;">\u4E0B\u73ED ' + todayRec.clockOut + '</span>';
+      if (todayRec.directHours !== null) h += '<span style="background:#FFF3B0;color:#8A6D00;padding:4px 12px;border-radius:8px;font-weight:bold;">\u76F4\u63A5 ' + todayRec.directHours + 'h</span>';
+      h += '<span style="background:' + (todayRec.effectiveHours >= 8 ? '#D4F5DC' : '#F0F0F0') + ';color:' + (todayRec.effectiveHours >= 8 ? '#2A8B3A' : '#999') + ';padding:4px 12px;border-radius:8px;font-weight:bold;">\u6709\u6548 ' + todayRec.effectiveHours + 'h</span>';
+      h += '</div>';
+      h += '<div style="display:flex;gap:6px;">';
+      h += '<button class="btn-icon-sm" onclick="App.toggleTrip(\'' + today + '\')" title="\u6807\u8BB0/\u53D6\u6D88\u51FA\u5DEE" style="' + (todayRec.isTrip ? 'background:#FFB347;color:#fff;' : '') + '">\u2708\uFE0F</button>';
+      if (!todayRec.settled) h += '<button class="btn-icon-sm" onclick="App.settleDay(\'' + today + '\')" title="\u7ED3\u7B97\u4ECA\u65E5">\u2705</button>';
+      h += '<button class="btn-icon-sm" onclick="App.deleteClock(\'' + today + '\')" title="\u5220\u9664">\u{1F5D1}\uFE0F</button>';
+      h += '</div>';
+      h += '</div>';
+      if (todayRec.note) h += '<div style="margin-top:6px;font-size:14px;color:#999;">' + this._esc(todayRec.note) + '</div>';
+      if (todayRec.isTrip) h += '<div style="margin-top:4px;font-size:14px;color:#FF8C00;font-weight:bold;">\u2708\uFE0F \u4ECA\u65E5\u51FA\u5DEE</div>';
+    } else {
+      h += '<div style="color:#bbb;text-align:center;padding:16px 0;">\u{1F552} \u4ECA\u65E5\u8FD8\u672A\u6253\u5361\uFF0C\u70B9\u51FB\u4E0A\u65B9\u6309\u94AE\u5F00\u59CB</div>';
+    }
+    h += '</div>';
+
+    // 月度汇总
+    h += '<div class="card" style="margin-bottom:12px;">';
+    h += '<div class="card-title">\u{1F4CA} ' + ym + ' \u6708\u5EA6\u6C47\u603B' + (summary.settled ? ' \u2705\u5DF2\u7ED3\u7B97' : '') + '</div>';
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;">';
+    h += '<div style="text-align:center;background:#E8F4FD;border-radius:10px;padding:10px 6px;"><div style="font-size:24px;font-weight:bold;color:#3B8BCC;">' + summary.totalHours + '</div><div style="font-size:13px;color:#888;">\u603B\u5DE5\u65F6(h)</div></div>';
+    h += '<div style="text-align:center;background:#D4F5DC;border-radius:10px;padding:10px 6px;"><div style="font-size:24px;font-weight:bold;color:#2A8B3A;">' + summary.workDays + '</div><div style="font-size:13px;color:#888;">\u5DE5\u4F5C\u5929\u6570</div></div>';
+    h += '<div style="text-align:center;background:#FFF3B0;border-radius:10px;padding:10px 6px;"><div style="font-size:24px;font-weight:bold;color:#B07020;">' + summary.tripDays + '</div><div style="font-size:13px;color:#888;">\u51FA\u5DEE\u5929\u6570</div></div>';
+    h += '<div style="text-align:center;background:#FFDDE1;border-radius:10px;padding:10px 6px;"><div style="font-size:24px;font-weight:bold;color:#C44A52;">' + summary.overtime + '</div><div style="font-size:13px;color:#888;">\u52A0\u73ED(h)</div></div>';
+    h += '</div>';
+    h += '<div style="margin-top:8px;font-size:14px;color:#888;">\u5E94\u51FA\u52E4: ' + summary.expectedHours + 'h \uFF5C \u5B9E\u9645: ' + summary.totalHours + 'h \uFF5C \u5DEE\u989D: ' + (Math.round((summary.totalHours - summary.expectedHours) * 10) / 10) + 'h</div>';
+    h += '</div>';
+
+    // 调休余额
+    h += '<div class="card" style="margin-bottom:12px;">';
+    h += '<div class="card-title">\u{1F3C4} \u8C03\u4F11\u4F59\u989D</div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+    h += '<div style="font-size:28px;font-weight:bold;color:' + (compTime.balance > 0 ? '#4ECCA3' : '#999') + ';">' + compTime.balance + 'h</div>';
+    h += '<button class="btn btn-sm" style="background:#D4F5DC;color:#2A8B3A;" onclick="App.showCompUseModal()">\u4F7F\u7528\u8C03\u4F11</button>';
+    h += '</div>';
+    if (compTime.transactions && compTime.transactions.length > 0) {
+      h += '<div style="margin-top:8px;max-height:120px;overflow-y:auto;">';
+      compTime.transactions.slice(-5).reverse().forEach(function(t) {
+        var color = t.type === 'earn' ? '#2A8B3A' : '#C44A52';
+        var sign = t.type === 'earn' ? '+' : '-';
+        h += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:14px;">';
+        h += '<span>' + t.date + ' ' + (t.note || '') + '</span>';
+        h += '<span style="color:' + color + ';font-weight:bold;">' + sign + t.amount + 'h</span>';
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+
+    // 月度台账
+    h += '<div class="card">';
+    h += '<div class="card-title">\u{1F4D3} \u6253\u5361\u53F0\u8D26</div>';
+    if (summary.records.length === 0) {
+      h += '<div style="color:#bbb;text-align:center;padding:16px 0;">\u6682\u65E0\u8BB0\u5F55</div>';
+    } else {
+      h += '<div style="overflow-x:auto;"><table style="width:100%;font-size:13px;border-collapse:collapse;">';
+      h += '<thead><tr style="background:#f5f5f5;"><th style="padding:6px;text-align:left;">\u65E5\u671F</th><th style="padding:6px;text-align:center;">\u4E0A\u73ED</th><th style="padding:6px;text-align:center;">\u4E0B\u73ED</th><th style="padding:6px;text-align:center;">\u76F4\u63A5</th><th style="padding:6px;text-align:center;">\u6709\u6548</th><th style="padding:6px;text-align:center;">\u51FA\u5DEE</th><th style="padding:6px;text-align:center;">\u7ED3\u7B97</th><th style="padding:6px;text-align:center;">\u64CD\u4F5C</th></tr></thead><tbody>';
+      var self = this;
+      summary.records.forEach(function(r) {
+        var d = r.data;
+        h += '<tr style="border-bottom:1px solid #f0f0f0;">';
+        h += '<td style="padding:6px;">' + r.date.substring(8) + '</td>';
+        h += '<td style="padding:6px;text-align:center;">' + (d.clockIn || '-') + '</td>';
+        h += '<td style="padding:6px;text-align:center;">' + (d.clockOut || '-') + '</td>';
+        h += '<td style="padding:6px;text-align:center;">' + (d.directHours !== null ? d.directHours + 'h' : '-') + '</td>';
+        h += '<td style="padding:6px;text-align:center;font-weight:bold;color:' + (d.effectiveHours >= 8 ? '#2A8B3A' : '#999') + ';">' + d.effectiveHours + 'h</td>';
+        h += '<td style="padding:6px;text-align:center;">' + (d.isTrip ? '\u2708\uFE0F' : '') + '</td>';
+        h += '<td style="padding:6px;text-align:center;">' + (d.settled ? '\u2705' : '\u23F3') + '</td>';
+        h += '<td style="padding:6px;text-align:center;"><button class="btn-icon-sm" onclick="App.deleteClock(\'' + r.date + '\')" title="\u5220\u9664">\u{1F5D1}\uFE0F</button></td>';
+        h += '</tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+    h += '</div>';
+
+    return h;
+  },
+  showClockInModal: function() {
+    var today = Storage.today();
+    var ym = today.substring(0, 7);
+    var summary = Storage.getMonthSummary(ym);
+    var todayRec = null;
+    summary.records.forEach(function(r) { if (r.date === today) todayRec = r.data; });
+    var now = new Date();
+    var nowTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    var h = '';
+    h += '<div class="modal-card" style="max-width:400px;">';
+    h += '<div class="modal-header"><span>\u{1F4CD} \u6253\u5361\u8BB0\u5F55</span><button class="modal-close" onclick="App.closeModal()">\u00D7</button></div>';
+    h += '<div style="padding:16px;">';
+    h += '<div style="margin-bottom:12px;font-size:14px;color:#888;">\u65E5\u671F: ' + today + '</div>';
+    h += '<div class="form-group"><label>\u4E0A\u73ED\u65F6\u95F4</label><input type="time" id="clockInTime" class="form-input" value="' + (todayRec ? todayRec.clockIn : nowTime) + '"></div>';
+    h += '<div class="form-group"><label>\u4E0B\u73ED\u65F6\u95F4</label><input type="time" id="clockOutTime" class="form-input" value="' + (todayRec ? todayRec.clockOut : '') + '"></div>';
+    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="clockNote" class="form-input" placeholder="\u53EF\u9009" value="' + (todayRec ? this._esc(todayRec.note) : '') + '"></div>';
+    h += '<div style="display:flex;gap:8px;margin-top:16px;">';
+    h += '<button class="btn btn-primary" style="flex:1;" onclick="App.saveClockIn()">\u2705 \u4FDD\u5B58</button>';
+    h += '<button class="btn" style="flex:1;" onclick="App.closeModal()">\u53D6\u6D88</button>';
+    h += '</div>';
+    h += '</div></div>';
+    this.showModal(h);
+  },
+  saveClockIn: function() {
+    var today = Storage.today();
+    var clockIn = document.getElementById('clockInTime').value;
+    var clockOut = document.getElementById('clockOutTime').value;
+    var note = document.getElementById('clockNote').value;
+    if (!clockIn && !clockOut) { this.showToast('\u26A0\uFE0F \u8BF7\u81F3\u5C11\u586B\u5199\u4E00\u4E2A\u65F6\u95F4'); return; }
+    Storage.addClockRecord(today, clockIn, clockOut, note);
+    this.closeModal();
+    this.render();
+    this.showToast('\u2705 \u6253\u5361\u5DF2\u4FDD\u5B58');
+  },
+  showDirectHoursModal: function() {
+    var today = Storage.today();
+    var ym = today.substring(0, 7);
+    var summary = Storage.getMonthSummary(ym);
+    var todayRec = null;
+    summary.records.forEach(function(r) { if (r.date === today) todayRec = r.data; });
+    var h = '';
+    h += '<div class="modal-card" style="max-width:400px;">';
+    h += '<div class="modal-header"><span>\u{1F4DD} \u76F4\u63A5\u5F55\u5DE5\u65F6</span><button class="modal-close" onclick="App.closeModal()">\u00D7</button></div>';
+    h += '<div style="padding:16px;">';
+    h += '<div style="margin-bottom:12px;font-size:14px;color:#888;">\u65E5\u671F: ' + today + '</div>';
+    h += '<div class="form-group"><label>\u5DE5\u65F6\u6570\uFF08\u5C0F\u65F6\uFF09</label><input type="number" id="directHoursInput" class="form-input" step="0.5" min="0" max="24" placeholder="\u5982: 8" value="' + (todayRec && todayRec.directHours !== null ? todayRec.directHours : '') + '"></div>';
+    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="directNote" class="form-input" placeholder="\u53EF\u9009" value="' + (todayRec ? this._esc(todayRec.note) : '') + '"></div>';
+    h += '<div style="display:flex;gap:8px;margin-top:16px;">';
+    h += '<button class="btn btn-primary" style="flex:1;" onclick="App.saveDirectHours()">\u2705 \u4FDD\u5B58</button>';
+    h += '<button class="btn" style="flex:1;" onclick="App.closeModal()">\u53D6\u6D88</button>';
+    h += '</div>';
+    h += '</div></div>';
+    this.showModal(h);
+  },
+  saveDirectHours: function() {
+    var today = Storage.today();
+    var hours = document.getElementById('directHoursInput').value;
+    var note = document.getElementById('directNote').value;
+    if (!hours || parseFloat(hours) <= 0) { this.showToast('\u26A0\uFE0F \u8BF7\u8F93\u5165\u6709\u6548\u5DE5\u65F6'); return; }
+    Storage.setDirectHours(today, hours, note);
+    this.closeModal();
+    this.render();
+    this.showToast('\u2705 \u5DE5\u65F6\u5DF2\u4FDD\u5B58');
+  },
+  showCompUseModal: function() {
+    var compTime = Storage.getCompTime();
+    var today = Storage.today();
+    var h = '';
+    h += '<div class="modal-card" style="max-width:400px;">';
+    h += '<div class="modal-header"><span>\u{1F3C4} \u4F7F\u7528\u8C03\u4F11</span><button class="modal-close" onclick="App.closeModal()">\u00D7</button></div>';
+    h += '<div style="padding:16px;">';
+    h += '<div style="margin-bottom:12px;font-size:16px;">\u5F53\u524D\u8C03\u4F11\u4F59\u989D: <b style="color:#4ECCA3;">' + compTime.balance + 'h</b></div>';
+    h += '<div class="form-group"><label>\u4F7F\u7528\u65F6\u95F4\uFF08\u5C0F\u65F6\uFF09</label><input type="number" id="compUseHours" class="form-input" step="0.5" min="0.5" max="' + compTime.balance + '" placeholder="\u5982: 4"></div>';
+    h += '<div class="form-group"><label>\u65E5\u671F</label><input type="date" id="compUseDate" class="form-input" value="' + today + '"></div>';
+    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="compUseNote" class="form-input" placeholder="\u53EF\u9009"></div>';
+    h += '<div style="display:flex;gap:8px;margin-top:16px;">';
+    h += '<button class="btn btn-primary" style="flex:1;" onclick="App.saveCompUse()">\u2705 \u786E\u8BA4\u4F7F\u7528</button>';
+    h += '<button class="btn" style="flex:1;" onclick="App.closeModal()">\u53D6\u6D88</button>';
+    h += '</div>';
+    h += '</div></div>';
+    this.showModal(h);
+  },
+  saveCompUse: function() {
+    var hours = parseFloat(document.getElementById('compUseHours').value);
+    var date = document.getElementById('compUseDate').value;
+    var note = document.getElementById('compUseNote').value;
+    if (!hours || hours <= 0) { this.showToast('\u26A0\uFE0F \u8BF7\u8F93\u5165\u6709\u6548\u65F6\u957F'); return; }
+    var ok = Storage.useCompTime(date, hours, note);
+    if (!ok) { this.showToast('\u26A0\uFE0F \u8C03\u4F11\u4F59\u989D\u4E0D\u8DB3'); return; }
+    this.closeModal();
+    this.render();
+    this.showToast('\u2705 \u8C03\u4F11\u5DF2\u4F7F\u7528 ' + hours + 'h');
+  },
+  toggleTrip: function(date) {
+    var isTrip = Storage.toggleTripDay(date);
+    this.render();
+    this.showToast(isTrip ? '\u2708\uFE0F \u5DF2\u6807\u8BB0\u51FA\u5DEE' : '\u5DF2\u53D6\u6D88\u51FA\u5DEE');
+  },
+  deleteClock: function(date) {
+    Storage.deleteClockRecord(date);
+    this.render();
+    this.showToast('\u2705 \u5DF2\u5220\u9664');
+  },
+  settleDay: function(date) {
+    Storage.settleDay(date);
+    this.render();
+    this.showToast('\u2705 \u5F53\u65E5\u5DF2\u7ED3\u7B97');
+  },
+  settleMonth: function() {
+    var ym = Storage.today().substring(0, 7);
+    Storage.settleMonth(ym);
+    this.render();
+    this.showToast('\u2705 \u6708\u5EA6\u5DF2\u7ED3\u7B97');
+  },
+  exportLedger: function() {
+    var ym = Storage.today().substring(0, 7);
+    var text = Storage.exportLedger(ym);
+    var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '\u5DE5\u65F6\u53F0\u8D26_' + ym + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showToast('\u{1F4E4} \u5DF2\u5BFC\u51FA');
+  },
+
   // ===== Window: News (时政热点) =====
   renderNews: function() {
     var today = Storage.today();
@@ -1203,82 +1215,110 @@ var App = {
     var today = Storage.today();
     if (!silent) this.showToast('\u{1F504} \u6B63\u5728\u4ECE\u7F51\u7EDC\u83B7\u53D6\u65F6\u653F\u8D44\u8BAF\u2026');
 
-    // RSS feeds for each section - fetched via rss2json.com API (handles CORS)
-    var feeds = {
-      macro: [
-        'http://www.chinadaily.com.cn/rss/business_rss.xml',
-        'https://feeds.bbci.co.uk/news/business/rss.xml'
-      ],
-      ai: [
-        'http://www.chinadaily.com.cn/rss/scitech_rss.xml',
-        'https://techcrunch.com/feed/'
-      ],
-      expo: [
-        'http://www.chinadaily.com.cn/rss/world_rss.xml',
-        'https://feeds.bbci.co.uk/news/technology/rss.xml'
-      ],
-      livelihood: [
-        'http://www.chinadaily.com.cn/rss/china_rss.xml',
-        'https://feeds.bbci.co.uk/news/world/asia/china/rss.xml'
-      ]
-    };
+    // Use 60s.viki.moe API (60秒读懂世界) + 知乎热榜 as news source
+    var news60sUrl = 'https://60s.viki.moe/v2/60s';
+    var zhihuUrl = 'https://60s.viki.moe/v2/zhihu';
 
-    var rss2jsonBase = 'https://api.rss2json.com/v1/api.json?rss_url=';
-    var allPromises = [];
-
-    Object.keys(feeds).forEach(function(section) {
-      feeds[section].forEach(function(feedUrl) {
-        var apiUrl = rss2jsonBase + encodeURIComponent(feedUrl) + '&count=6';
-        var p = fetch(apiUrl).then(function(res) { return res.json(); }).then(function(data) {
-          var items = [];
-          if (data && data.status === 'ok' && data.items) {
-            var feedTitle = (data.feed && data.feed.title) ? data.feed.title : '';
-            data.items.forEach(function(item) {
-              var desc = item.description || item.content || '';
-              desc = desc.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&[a-z]+;/g, '').replace(/\s+/g, ' ').trim();
-              if (desc.length > 300) desc = desc.substring(0, 300) + '...';
-              items.push({
-                id: 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8),
-                title: (item.title || '').trim(),
-                summary: desc,
-                source: feedTitle,
-                link: item.link || '',
-                impact: '',
-                thought: '',
-                favorited: false,
-                fromWeb: true,
-                createdAt: Date.now()
-              });
-            });
-          }
-          return { section: section, items: items };
-        }).catch(function(err) {
-          console.log('[News] Feed error:', feedUrl, err);
-          return { section: section, items: [] };
+    var p60s = fetch(news60sUrl).then(function(res) { return res.json(); }).then(function(data) {
+      var items = [];
+      if (data && data.code === 200 && data.data && data.data.news) {
+        data.data.news.forEach(function(text, idx) {
+          items.push({
+            id: 'web_' + Date.now() + '_' + idx,
+            title: text,
+            summary: '',
+            source: '60秒读懂世界',
+            link: '',
+            impact: '',
+            thought: '',
+            favorited: false,
+            fromWeb: true,
+            createdAt: Date.now()
+          });
         });
-        allPromises.push(p);
-      });
+      }
+      return items;
+    }).catch(function(err) {
+      console.log('[News] 60s API error:', err);
+      return [];
     });
 
-    Promise.all(allPromises).then(function(results) {
+    var pZhihu = fetch(zhihuUrl).then(function(res) { return res.json(); }).then(function(data) {
+      var items = [];
+      if (data && data.code === 200 && Array.isArray(data.data)) {
+        data.data.slice(0, 12).forEach(function(item, idx) {
+          items.push({
+            id: 'zhihu_' + Date.now() + '_' + idx,
+            title: item.title || '',
+            summary: (item.detail || '').substring(0, 200),
+            source: '知乎热榜',
+            link: item.url || '',
+            impact: '',
+            thought: '',
+            favorited: false,
+            fromWeb: true,
+            createdAt: Date.now()
+          });
+        });
+      }
+      return items;
+    }).catch(function(err) {
+      console.log('[News] Zhihu API error:', err);
+      return [];
+    });
+
+    Promise.all([p60s, pZhihu]).then(function(results) {
+      var news60s = results[0]; // 60秒读懂世界
+      var zhihuItems = results[1]; // 知乎热榜
+
+      // Classify 60s news into sections by keyword matching
       var sections = { macro: [], ai: [], expo: [], livelihood: [] };
       var seen = {};
-      results.forEach(function(r) {
-        r.items.forEach(function(item) {
-          var key = item.title;
-          if (key && !seen[key] && sections[r.section].length < 6) {
-            seen[key] = true;
-            sections[r.section].push(item);
+
+      // Keyword-based classification
+      var kw = {
+        macro: ['\u7ECF\u6D4E', '\u8D22\u653F', '\u7A0E', '\u94F6\u884C', '\u592E\u884C', '\u8D27\u5E01', '\u623F\u4EA7', '\u80A1\u5E02', '\u8D37', '\u5546\u52A1', '\u901A\u5546', '\u5173\u7A0E', '\u8D38\u6613', '\u6295\u8D44', '\u57FA\u5EFA', '\u5DE5\u7A0B', '\u91C7\u8D2D'],
+        ai: ['AI', '\u4EBA\u5DE5\u667A\u80FD', '\u7B97\u6CD5', '\u5927\u6A21\u578B', '\u82AF\u7247', '\u79D1\u6280', '\u4E92\u8054\u7F51', '\u6570\u5B57', '\u667A\u80FD', '\u673A\u5668\u4EBA', '\u5347\u7EF4', '\u5B81\u5FB7', '\u7279\u65AF\u62C9', '\u82F9\u679C', '\u5FAE\u8F6F', '\u8C37\u6B4C', '\u767E\u5EA6', '\u5BBD\u5185', '\u9AD8\u901A', '\u534E\u4E3A', '\u82F9\u679C', 'GPT', 'LLM'],
+        expo: ['\u5C55\u4F1A', '\u5CF0\u4F1A', '\u8BBA\u575B', '\u4F1A\u8BAE', '\u53D1\u5E03', '\u7B7E\u7EA6', '\u5408\u4F5C', '\u9879\u76EE', '\u62DB\u5546', '\u5DE5\u56ED', '\u4EA7\u4E1A\u56ED', '\u878D\u8D44', '\u4E0A\u5E02', '\u5E76\u8D2D'],
+        livelihood: ['\u6C11\u751F', '\u6559\u80B2', '\u533B\u7597', '\u4FDD\u9669', '\u5C31\u4E1A', '\u5DE5\u8D44', '\u517B\u8001', '\u4F4F\u623F', '\u98DF\u54C1', '\u5B89\u5168', '\u73AF\u5883', '\u4EA4\u901A', '\u7269\u4EF7', '\u7ED3\u5A5A', '\u751F\u80B2', '\u6C34\u7535', '\u7167\u987E', '\u8865\u8D34', '\u793E\u4F1A', '\u6E29\u5EA6', '\u96E8', '\u70ED', '\u51B7', '\u706B\u707E', '\u5730\u9707']
+      };
+
+      function classify(text) {
+        for (var sec in kw) {
+          for (var i = 0; i < kw[sec].length; i++) {
+            if (text.indexOf(kw[sec][i]) >= 0) return sec;
           }
-        });
+        }
+        return 'macro'; // default to macro
+      }
+
+      // Distribute 60s news into sections
+      news60s.forEach(function(item) {
+        var sec = classify(item.title);
+        if (!seen[item.title] && sections[sec].length < 6) {
+          seen[item.title] = true;
+          sections[sec].push(item);
+        }
       });
+
+      // Add zhihu items to fill empty sections
+      zhihuItems.forEach(function(item) {
+        var sec = classify(item.title);
+        if (!seen[item.title] && sections[sec].length < 6) {
+          seen[item.title] = true;
+          sections[sec].push(item);
+        }
+      });
+
       Storage.saveNewsBriefingFromWeb(today, sections);
       self.render();
       var total = sections.macro.length + sections.ai.length + sections.expo.length + sections.livelihood.length;
       if (total > 0) {
         if (!silent) self.showToast('\u2705 \u5DF2\u83B7\u53D6 ' + total + ' \u6761\u65F6\u653F\u8D44\u8BAF');
       } else {
-        if (!silent) self.showToast('\u26A0\uFE0F \u8D44\u8BAF\u83B7\u53D6\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u540E\u91CD\u8BD5');
+        Storage.setNewsWebFetched(today);
+        self.render();
+        if (!silent) self.showToast('\u26A0\uFE0F \u8D44\u8BAF\u83B7\u53D6\u5931\u8D25\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5');
       }
     }).catch(function(err) {
       console.error('[News] Fetch error:', err);
@@ -1484,78 +1524,165 @@ var App = {
     if (ta) { ta.select(); document.execCommand('copy'); this.showToast('\u2705 已复制到剪贴板'); }
   },
   // ===== Window: English (英语学习) =====
+  _englishFilter: 'today20',
+  _englishMode: 'today20',
   renderEnglish: function() {
     var self = this;
     var data = Storage.getEnglishData();
-    var todayMin = Storage.getEnglishTodayMinutes();
-    var streak = Storage.getEnglishStreak();
-    var goal = data.dailyGoal;
-    var pct = goal > 0 ? Math.min(100, Math.round(todayMin / goal * 100)) : 0;
+    var goal = data.goal || { name: '英语学习', tag: '商务管理', totalWords: 200, dailyPush: 20 };
     var today = Storage.today();
+    var todayMin = Storage.getEnglishTodayMinutes();
     var wordData = Storage.getDailyWords(today);
     var wordsFetched = Storage.isDailyWordsFetched(today);
+    var weekCount = Storage.getEnglishWeekCheckin();
+    var oralCount = Storage.getEnglishOralCount();
+    var statusMap = (data.wordStatus) || {};
+    var pushed = goal.dailyPush || 20;
+    var total = goal.totalWords || 200;
 
-    var h = '<div class="window-header"><div class="window-title">\u{1F524} 英语学习</div>';
-    h += '<button class="btn btn-primary btn-sm" onclick="App.showEnglishModal()">+ 打卡</button></div>';
-    h += '<div class="stat-grid">';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F4CA}</div><div class="stat-value">' + todayMin + '/' + goal + '</div><div class="stat-label">今日分钟</div></div>';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F525}</div><div class="stat-value">' + streak + '</div><div class="stat-label">连续天数</div></div>';
-    h += '<div class="stat-card"><div class="stat-icon">\u{1F4DD}</div><div class="stat-value">' + data.records.length + '</div><div class="stat-label">总记录</div></div>';
-    h += '</div>';
-    if (todayMin > 0) {
-      h += '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:15px;color:#888;margin-bottom:4px;"><span>今日目标</span><span>' + pct + '%</span></div>';
-      h += '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;"></div></div></div>';
-    }
-
-    // ===== 每日单词板块 =====
-    h += '<div class="card"><div class="card-title">\u{1F4D8} 每日20词';
-    h += '<button class="btn btn-primary btn-sm" style="float:right;font-size:12px;padding:2px 8px;" onclick="App.fetchDailyWords(false)">\u{1F504} 换一批</button>';
-    h += '</div>';
-    if (wordData && wordData.words && wordData.words.length > 0) {
-      h += '<div class="word-list">';
-      wordData.words.forEach(function(w, i) {
-        var posShort = w.pos ? w.pos.replace('noun','n.').replace('verb','v.').replace('adjective','adj.').replace('adverb','adv.').replace('pronoun','pron.').replace('preposition','prep.').replace('conjunction','conj.') : '';
-        h += '<div class="word-card" onclick="App.toggleWordDetail(this)">';
-        h += '<div class="word-header">';
-        h += '<span class="word-num">' + (i + 1) + '</span>';
-        h += '<span class="word-spell">' + self._esc(w.word) + '</span>';
-        if (posShort) h += '<span class="word-pos">' + self._esc(posShort) + '</span>';
-        if (w.meaning) h += '<span class="word-meaning">' + self._esc(w.meaning) + '</span>';
-        h += '<span class="word-expand">\u25BC</span>';
-        h += '</div>';
-        h += '<div class="word-detail"><div class="word-detail-inner">';
-        h += '<div class="word-section"><div class="word-section-title">\u2728 高频搭配</div>';
-        if (w.collocations && w.collocations.length > 0) {
-          h += '<div class="word-collocations">';
-          w.collocations.forEach(function(c) { h += '<span class="word-collocation">' + self._esc(c) + '</span>'; });
-          h += '</div>';
-        } else {
-          h += '<div class="word-empty">暂无搭配数据</div>';
-        }
-        h += '</div>';
-        h += '<div class="word-section"><div class="word-section-title">\u{1F4DD} 实用例句</div>';
-        if (w.example) {
-          h += '<div class="word-example">' + self._esc(w.example) + '</div>';
-          if (w.exampleZh) h += '<div class="word-example-zh">' + self._esc(w.exampleZh) + '</div>';
-        } else {
-          h += '<div class="word-empty">暂无例句</div>';
-        }
-        h += '</div>';
-        h += '<div class="word-section"><div class="word-section-title">\u26A0\uFE0F 易混提示</div>';
-        if (w.confusion) {
-          h += '<div class="word-confusion">' + self._esc(w.confusion) + '</div>';
-        } else {
-          h += '<div class="word-empty">无特殊辨析</div>';
-        }
-        h += '</div>';
-        h += '</div></div>';
-        h += '</div>';
+    // 已掌握单词数：所有历史日子中标记为 "已掌握" 的去重集合
+    var masteredSet = {};
+    var allWords = Storage.get(Storage.KEYS.DAILY_WORDS) || {};
+    Object.keys(allWords).forEach(function(d) {
+      (allWords[d].words || []).forEach(function(w) {
+        var st = statusMap[w.word] ? statusMap[w.word].status : null;
+        if (st === '已掌握') masteredSet[w.word] = true;
       });
-      h += '</div>';
+    });
+    var mastered = Object.keys(masteredSet).length;
+    var pending = Math.max(0, total - mastered);
+    var pct = total > 0 ? Math.round(mastered / total * 100) : 0;
+    if (pct > 100) pct = 100;
+
+    var h = '<div class="window-header"><div class="window-title">📚 英语学习</div>';
+    h += '<button class="btn btn-primary btn-sm" onclick="App.showEnglishModal()">+ 打卡</button></div>';
+
+    // ===== 1. 目标卡 =====
+    h += '<div class="eng-goal-card" onclick="App.showEnglishGoalModal()">';
+    h += '<div class="eng-goal-row1"><span class="eng-goal-icon">🎓</span>';
+    h += '<span class="eng-goal-name">' + self._esc(goal.name) + '</span>';
+    h += '<span class="eng-goal-edit">✏️</span></div>';
+    h += '<div class="eng-goal-desc">题库' + total + '词 · ' + self._esc(goal.tag) + ' · 每日推送' + pushed + '词</div>';
+    h += '<div class="eng-goal-progress">';
+    h += '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%;"></div></div>';
+    h += '<div class="eng-goal-meta">总进度 ' + mastered + '/' + total + ' (' + pct + '%)</div>';
+    h += '</div></div>';
+
+    // ===== 2. 统计网格 (3x2) =====
+    h += '<div class="eng-stats-grid">';
+    h += '<div class="eng-stat-box"><div class="eng-stat-num">' + pushed + '</div><div class="eng-stat-label">今日</div></div>';
+    h += '<div class="eng-stat-box"><div class="eng-stat-num">' + mastered + '</div><div class="eng-stat-label">今日已掌握</div></div>';
+    h += '<div class="eng-stat-box"><div class="eng-stat-num">' + pending + '</div><div class="eng-stat-label">待掌握</div></div>';
+    h += '<div class="eng-stat-box"><div class="eng-stat-num">' + oralCount + '</div><div class="eng-stat-label">口语</div></div>';
+    h += '<div class="eng-stat-box"><div class="eng-stat-num">' + weekCount + '/' + (data.weekCheckin || 7) + '</div><div class="eng-stat-label">本周打卡</div></div>';
+    h += '<div class="eng-stat-box"><div class="eng-stat-num">' + todayMin + 'm</div><div class="eng-stat-label">今日时长</div></div>';
+    h += '</div>';
+
+    // ===== 3. 主操作行 =====
+    h += '<div class="eng-action-row">';
+    h += '<button class="eng-action eng-action-primary" onclick="App.showEnglishModal()">打卡</button>';
+    h += '<button class="eng-action" onclick="App.englishActionStudy()">今日背词</button>';
+    h += '<button class="eng-action" onclick="App.englishActionReview()">生词复习</button>';
+    h += '<button class="eng-action" onclick="App.englishActionAdd()">新增单词</button>';
+    h += '</div>';
+
+    // ===== 4. 过滤器行 =====
+    var filter = this._englishFilter || 'today20';
+    var filterMap = { today20: '今日20词', all: '全部', new: '生词', familiar: '熟悉', mastered: '已掌握' };
+    var fbtns = ['today20', 'all', 'new', 'familiar', 'mastered'].map(function(f) {
+      var cls = 'eng-filter' + (filter === f ? ' eng-filter-active' : '');
+      return '<button class="' + cls + '" onclick="App.englishSetFilter(\'' + f + '\')">' + filterMap[f] + '</button>';
+    }).join('');
+    h += '<div class="eng-filter-row">' + fbtns + '</div>';
+
+    // ===== 5. 词表 =====
+    h += '<div class="card"><div class="card-title">📚 今日单词 (' + (wordData && wordData.words ? wordData.words.length : 0) + ')';
+    h += '<button class="btn-icon-sm" style="float:right;" onclick="App.fetchDailyWords(false)" title="刷新单词">🔄</button>';
+    h += '</div>';
+
+    if (wordData && wordData.words && wordData.words.length > 0) {
+      var words = wordData.words.slice();
+      // 过滤
+      if (filter === 'new') {
+        words = words.filter(function(w) { return !statusMap[w.word]; });
+      } else if (filter === 'familiar') {
+        words = words.filter(function(w) { return statusMap[w.word] && statusMap[w.word].status === '熟悉'; });
+      } else if (filter === 'mastered') {
+        words = words.filter(function(w) { return statusMap[w.word] && statusMap[w.word].status === '已掌握'; });
+      } else if (filter === 'all') {
+        // 全部：含历史日期所有单词
+        var allWordsList = [];
+        Object.keys(allWords).forEach(function(d) {
+          (allWords[d].words || []).forEach(function(w) {
+            if (!allWordsList.find(function(x) { return x.word === w.word; })) {
+              allWordsList.push(Object.assign({}, w, { date: d }));
+            }
+          });
+        });
+        words = allWordsList;
+      }
+
+      if (words.length === 0) {
+        h += '<div class="empty-state-sm"><div class="empty-text">当前过滤下无单词</div></div>';
+      } else {
+        h += '<div class="word-list">';
+        words.forEach(function(w, i) {
+          var posShort = w.pos ? w.pos.replace('noun', 'n.').replace('verb', 'v.').replace('adjective', 'adj.').replace('adverb', 'adv.').replace('pronoun', 'pron.').replace('preposition', 'prep.').replace('conjunction', 'conj.') : '';
+          var ws = statusMap[w.word];
+          var status = ws ? ws.status : '今日';
+          var statusTagCls = status === '已掌握' ? 'tag-mint' : (status === '熟悉' ? 'tag-blue' : 'tag-yellow');
+          h += '<div class="word-card-compact" onclick="App.toggleWordDetail(this)">';
+          h += '<div class="wc-head">';
+          h += '<span class="wc-num">' + (i + 1) + '</span>';
+          h += '<span class="wc-spell">' + self._esc(w.word) + '</span>';
+          if (posShort) h += '<span class="wc-pos">' + self._esc(posShort) + '</span>';
+          h += '<span class="wc-toggle">▼</span>';
+          h += '</div>';
+          if (w.meaning) h += '<div class="wc-meaning">' + self._esc(w.meaning) + '</div>';
+          h += '<div class="wc-tags">';
+          h += '<span class="tag tag-' + (goal.tag === '商务管理' ? 'blue' : 'mint') + '">' + self._esc(goal.tag || '通用') + '</span>';
+          h += '<span class="tag tag-yellow">生词·今日</span>';
+          if (status && status !== '今日') {
+            h += '<span class="tag ' + statusTagCls + '" style="cursor:pointer;" onclick="App.englishCycleWordStatus(\'' + self._esc(w.word) + '\', event)" title="点击切换状态">' + status + ' ▾</span>';
+          } else {
+            h += '<span class="tag tag-outline" style="cursor:pointer;color:#888;" onclick="App.englishCycleWordStatus(\'' + self._esc(w.word) + '\', event)" title="点击标记状态">+标记</span>';
+          }
+          h += '</div>';
+          // 展开面板：保留上次设计的搭配/例句/易混 三板块
+          h += '<div class="word-detail"><div class="word-detail-inner">';
+          h += '<div class="word-section"><div class="word-section-title">✨ 高频搭配</div>';
+          if (w.collocations && w.collocations.length > 0) {
+            h += '<div class="word-collocations">';
+            w.collocations.forEach(function(c) { h += '<span class="word-collocation">' + self._esc(c) + '</span>'; });
+            h += '</div>';
+          } else {
+            h += '<div class="word-empty">暂无搭配数据</div>';
+          }
+          h += '</div>';
+          h += '<div class="word-section"><div class="word-section-title">📝 实用例句</div>';
+          if (w.example) {
+            h += '<div class="word-example">' + self._esc(w.example) + '</div>';
+            if (w.exampleZh) h += '<div class="word-example-zh">' + self._esc(w.exampleZh) + '</div>';
+          } else {
+            h += '<div class="word-empty">暂无例句</div>';
+          }
+          h += '</div>';
+          h += '<div class="word-section"><div class="word-section-title">⚠️ 易混提示</div>';
+          if (w.confusion) {
+            h += '<div class="word-confusion">' + self._esc(w.confusion) + '</div>';
+          } else {
+            h += '<div class="word-empty">无特殊辨析</div>';
+          }
+          h += '</div>';
+          h += '</div></div>';
+          h += '</div>';
+        });
+        h += '</div>';
+      }
     } else if (!wordsFetched) {
-      h += '<div class="loading-state"><div class="loading-icon">\u23F3</div><div style="margin-top:8px;color:#999;">\u6B63\u5728\u4ECE\u7F51\u7EDC\u83B7\u53D6\u5355\u8BCD\u2026</div></div>';
+      h += '<div class="loading-state"><div class="loading-icon"></div><div style="margin-top:8px;color:#999;">正在从网络获取单词…</div></div>';
     } else {
-      h += '<div class="empty-state-sm"><div class="empty-text">\u6682\u65E0\u5355\u8BCD\u6570\u636E</div></div>';
+      h += '<div class="empty-state-sm"><div class="empty-text">暂无单词数据</div></div>';
     }
     h += '</div>';
 
@@ -1564,22 +1691,154 @@ var App = {
       this.fetchDailyWords(true);
     }
 
-    h += '<div class="card"><div class="card-title">\u{1F4CB} 学习记录</div>';
+    // ===== 6. 学习记录 =====
+    h += '<div class="card"><div class="card-title">📋 学习记录</div>';
     var recent = data.records.slice().reverse().slice(0, 20);
     if (recent.length === 0) {
-      h += '<div class="empty-state-sm"><div class="empty-text">暂无学习记录<br>点击 + 打卡 开始</div></div>';
+      h += '<div class="empty-state-sm"><div class="empty-text">暂无学习记录<br>点击打卡开始</div></div>';
     } else {
       h += '<div class="table-wrap"><table class="data-table"><thead><tr><th>日期</th><th>类型</th><th>时长</th><th>内容</th><th></th></tr></thead><tbody>';
       recent.forEach(function(r) {
         h += '<tr><td>' + r.date + '</td><td><span class="tag tag-blue">' + r.type + '</span></td>';
         h += '<td style="font-weight:700;">' + r.duration + 'min</td>';
-        h += '<td>' + App._esc(r.content || r.notes || '') + '</td>';
-        h += '<td><button class="btn-icon-sm" onclick="App.deleteEnglishRecord(\'' + r.id + '\')">\u00D7</button></td></tr>';
+        h += '<td>' + self._esc(r.content || r.notes || '') + '</td>';
+        h += '<td><button class="btn-icon-sm" onclick="App.deleteEnglishRecord(\'' + r.id + '\')">×</button></td></tr>';
       });
       h += '</tbody></table></div>';
     }
     h += '</div>';
+
+    // ===== 7. 底栏 =====
+    h += '<div class="eng-bottom-bar">';
+    h += '<button class="eng-bottom-btn" onclick="App.englishSyncAll()">同步全部</button>';
+    h += '<button class="eng-bottom-btn" onclick="App.englishEndOfDay()">下班一键</button>';
+    h += '<button class="eng-bottom-btn" onclick="App.englishExport()">存档导出</button>';
+    h += '</div>';
+
     return h;
+  },
+  showEnglishGoalModal: function() {
+    var data = Storage.getEnglishData();
+    var g = data.goal || {};
+    var h = '<div class="modal-title">🎓 编辑学习目标</div><div class="modal-body">';
+    h += '<div style="margin-bottom:12px;"><label class="modal-label">目标名称</label><input type="text" class="input-field" id="engGoalName" value="' + this._esc(g.name || '') + '" placeholder="例：上海海事大学 MBA 备考"></div>';
+    h += '<div style="margin-bottom:12px;"><label class="modal-label">分类标签</label><input type="text" class="input-field" id="engGoalTag" value="' + this._esc(g.tag || '商务管理') + '" placeholder="例：商务管理"></div>';
+    h += '<div style="display:flex;gap:10px;margin-bottom:12px;"><div style="flex:1;"><label class="modal-label">题库总词数</label><input type="number" class="input-field" id="engGoalTotal" value="' + (g.totalWords || 200) + '" min="20" max="2000"></div>';
+    h += '<div style="flex:1;"><label class="modal-label">每日推送</label><input type="number" class="input-field" id="engGoalDaily" value="' + (g.dailyPush || 20) + '" min="5" max="50"></div></div>';
+    h += '<div style="margin-bottom:12px;"><label class="modal-label">本周打卡目标 (天)</label><input type="number" class="input-field" id="engGoalWeek" value="' + (data.weekCheckin || 7) + '" min="1" max="7"></div>';
+    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">取消</button><button class="btn btn-primary" onclick="App.saveEnglishGoal()">保存</button></div>';
+    this.showModal(h);
+  },
+  saveEnglishGoal: function() {
+    var name = document.getElementById('engGoalName').value.trim();
+    var tag = document.getElementById('engGoalTag').value.trim() || '通用';
+    var total = parseInt(document.getElementById('engGoalTotal').value) || 200;
+    var daily = parseInt(document.getElementById('engGoalDaily').value) || 20;
+    var week = parseInt(document.getElementById('engGoalWeek').value) || 7;
+    if (week < 1) week = 1; if (week > 7) week = 7;
+    var data = Storage.getEnglishData();
+    Storage.saveEnglishGoal({ name: name || '英语学习', tag: tag, totalWords: total, dailyPush: daily });
+    data.weekCheckin = week;
+    Storage.set(Storage.KEYS.ENGLISH, data);
+    this.closeModal();
+    this.render();
+    this.showToast('✅ 目标已更新');
+  },
+  englishSetFilter: function(f) {
+    this._englishFilter = f;
+    this.render();
+  },
+  englishCycleWordStatus: function(word, evt) {
+    if (evt) { evt.stopPropagation(); }
+    var cur = Storage.getEnglishWordStatus(word) || null;
+    var order = ['新词', '熟悉', '已掌握', null];
+    var next = order[(order.indexOf(cur) + 1) % order.length];
+    Storage.setEnglishWordStatus(word, next);
+    this.render();
+    this.showToast(next ? '已标记为：' + next : '已重置标记');
+  },
+  englishActionStudy: function() {
+    this._englishFilter = 'today20';
+    this.render();
+    this.showToast('📖 今日20词，已展开');
+  },
+  englishActionReview: function() {
+    this._englishFilter = 'new';
+    this.render();
+    this.showToast('🔁 切换到生词复习');
+  },
+  englishActionAdd: function() {
+    var h = '<div class="modal-title">➕ 新增单词</div><div class="modal-body">';
+    h += '<div style="margin-bottom:12px;"><label class="modal-label">英文单词</label><input type="text" class="input-field" id="newWWord" placeholder="例：leverage"></div>';
+    h += '<div style="margin-bottom:12px;"><label class="modal-label">中文释义</label><input type="text" class="input-field" id="newWMeaning" placeholder="例：杠杆 / 影响"></div>';
+    h += '<div><label class="modal-label">备注 (可选)</label><input type="text" class="input-field" id="newWNote" placeholder="例：MBA 高频词"></div>';
+    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">取消</button><button class="btn btn-primary" onclick="App.saveEnglishAddWord()">加入今日</button></div>';
+    this.showModal(h);
+  },
+  saveEnglishAddWord: function() {
+    var word = document.getElementById('newWWord').value.trim().toLowerCase();
+    var meaning = document.getElementById('newWMeaning').value.trim();
+    var note = document.getElementById('newWNote').value.trim();
+    if (!word) { this.showToast('请输入单词'); return; }
+    var today = Storage.today();
+    var d = Storage.getDailyWords(today) || { date: today, words: [], webFetched: true, fetchedAt: Storage.now() };
+    if (!d.words) d.words = [];
+    if (d.words.find(function(w) { return w.word === word; })) {
+      this.showToast('该单词已在列表中');
+    } else {
+      d.words.unshift({ word: word, meaning: meaning, pos: '', phonetic: '', collocations: [], example: '', exampleZh: '', confusion: '', isManual: true, note: note });
+      Storage.saveDailyWords(today, d.words);
+    }
+    Storage.addEnglishRecord({ type: '单词记忆', duration: 1, content: '手动新增：' + word + (note ? ' (' + note + ')' : '') });
+    this.closeModal();
+    this.render();
+    this.showToast('✅ 已加入今日');
+  },
+  englishSyncAll: function() {
+    this.fetchDailyWords(false);
+  },
+  englishEndOfDay: function() {
+    if (!confirm('确认结束今日学习？已学单词将标记为"熟悉"。')) return;
+    var today = Storage.today();
+    var d = Storage.getDailyWords(today);
+    if (d && d.words) {
+      var statusMap = (Storage.getEnglishData().wordStatus) || {};
+      d.words.forEach(function(w) {
+        if (!statusMap[w.word]) {
+          Storage.setEnglishWordStatus(w.word, '熟悉');
+        }
+      });
+    }
+    Storage.addEnglishRecord({ type: '单词记忆', duration: 0, content: '下班打卡：今日学习结束' });
+    this.render();
+    this.showToast('🌙 今日学习已结课');
+  },
+  englishExport: function() {
+    var today = Storage.today();
+    var d = Storage.getDailyWords(today);
+    var data = Storage.getEnglishData();
+    var statusMap = data.wordStatus || {};
+    var lines = [];
+    lines.push('# 英语学习存档 (' + today + ')');
+    lines.push('');
+    var g = data.goal || {};
+    lines.push('目标：' + (g.name || '') + ' · 题库' + (g.totalWords || 0) + '词 · 已掌握 ' + Object.keys(statusMap).filter(function(k){return statusMap[k].status==='已掌握';}).length + ' 个');
+    lines.push('');
+    if (d && d.words) {
+      d.words.forEach(function(w, i) {
+        var st = statusMap[w.word] ? statusMap[w.word].status : '新词';
+        lines.push((i + 1) + '. ' + w.word + (w.phonetic ? ' /' + w.phonetic + '/' : '') + ' — ' + (w.meaning || '') + ' [' + st + ']');
+      });
+    }
+    var text = lines.join('\n');
+    var h = '<div class="modal-title">📤 存档导出</div><div class="modal-body">';
+    h += '<textarea id="engExportText" class="input-field" style="height:300px;font-family:monospace;font-size:13px;line-height:1.6;" readonly>' + this._esc(text) + '</textarea>';
+    h += '</div><div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal()">关闭</button><button class="btn btn-primary" onclick="App.copyEnglishExport()">复制</button></div>';
+    this.showModal(h);
+  },
+  copyEnglishExport: function() {
+    var ta = document.getElementById('engExportText');
+    if (ta) { ta.select(); document.execCommand('copy'); this.showToast('✅ 已复制'); }
   },
   toggleWordDetail: function(el) {
     el.classList.toggle('expanded');
@@ -2051,31 +2310,20 @@ var App = {
     var today = Storage.today();
     var mm = today.substring(5, 7);
     var dd = today.substring(8, 10);
-    if (!silent) this.showToast('🔄 正在获取…');
-    // 先尝试中文维基百科
-    var zhUrl = 'https://zh.wikipedia.org/api/rest_v1/feed/onthisday/events/' + mm + '/' + dd;
-    fetch(zhUrl).then(function(res) { return res.json(); }).then(function(data) {
-      if (data && data.events && data.events.length > 0) {
-        self._processHistoryEvents(data.events, today, silent);
-      } else {
-        self._fetchHistoryFromEn(today, silent);
-      }
-    }).catch(function() {
-      self._fetchHistoryFromEn(today, silent);
-    });
-  },
-  _fetchHistoryFromEn: function(today, silent) {
-    var self = this;
-    var mm = today.substring(5, 7);
-    var dd = today.substring(8, 10);
-    var enUrl = 'https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/' + mm + '/' + dd;
-    fetch(enUrl).then(function(res) { return res.json(); }).then(function(data) {
-      if (data && data.events && data.events.length > 0) {
-        self._processHistoryEvents(data.events, today, silent);
+    if (!silent) this.showToast('\u{1F504} \u6B63\u5728\u83B7\u53D6\u2026');
+    // Use Baidu Baike "Events on History" API (Chinese, CORS-supported, not blocked)
+    var apiUrl = 'https://baike.baidu.com/cms/home/eventsOnHistory/' + mm + '.json';
+    fetch(apiUrl).then(function(res) { return res.json(); }).then(function(data) {
+      var dateKey = mm + dd;
+      var monthData = data[mm] || {};
+      var events = monthData[dateKey] || [];
+      if (events.length > 0) {
+        self._processHistoryEvents(events, today, silent);
       } else {
         self._fallbackHistoryLocal(today, silent);
       }
-    }).catch(function() {
+    }).catch(function(err) {
+      console.log('[History] Baidu Baike API error:', err);
       self._fallbackHistoryLocal(today, silent);
     });
   },
@@ -2091,8 +2339,10 @@ var App = {
     };
     events.forEach(function(ev) {
       if (entries.length >= 8) return;
-      var text = ev.text || '';
-      if (text.length < 15) return;
+      var rawTitle = ev.title || '';
+      // Strip HTML tags from title
+      var text = rawTitle.replace(/<[^>]+>/g, '');
+      if (text.length < 5) return;
       var cat = 'history';
       for (var key in catKeywords) {
         for (var i = 0; i < catKeywords[key].length; i++) {
@@ -2100,11 +2350,14 @@ var App = {
         }
         if (cat !== 'history') break;
       }
+      var typeLabel = '';
+      if (ev.type === 'birth') typeLabel = '出生';
+      else if (ev.type === 'death') typeLabel = '逝世';
       entries.push({
         title: text.length > 80 ? text.substring(0, 80) + '…' : text,
         year: ev.year ? String(ev.year) : '',
         category: cat,
-        story: text,
+        story: text + (typeLabel ? '（' + typeLabel + '）' : ''),
         source: 'web'
       });
     });
@@ -2166,52 +2419,9 @@ var App = {
   fetchDailyWhyFromWeb: function(silent) {
     var self = this;
     var today = Storage.today();
-    if (!silent) this.showToast('🔄 正在获取…');
-    // 优先：中文维基百科随机条目
-    var wikiUrl = 'https://zh.wikipedia.org/api/rest_v1/page/random/summary';
-    fetch(wikiUrl).then(function(res) { return res.json(); }).then(function(data) {
-      if (data && data.title && data.extract && data.extract.length > 30) {
-        var entry = self._formatWikiEntry(data);
-        Storage.saveDailyWhyWebEntry(today, entry);
-        self.render();
-        if (!silent) self.showToast('✅ 已获取新内容');
-      } else {
-        self._fetchDailyWhyFromHitokoto(today, silent);
-      }
-    }).catch(function() {
-      self._fetchDailyWhyFromHitokoto(today, silent);
-    });
-  },
-  _formatWikiEntry: function(data) {
-    var title = data.title || '未知';
-    var extract = data.extract || '';
-    var description = data.description || '';
-    var category = '百科';
-    var catMap = {
-      '科学': ['物理','化学','生物','天文','数学','医学','基因','相对论','量子'],
-      '历史': ['历史','战争','朝代','帝国','革命','古'],
-      '自然': ['自然','地理','动物','植物','生态','气候','海洋'],
-      '文化': ['文化','艺术','文学','音乐','电影','宗教','哲学','节日'],
-      '生活': ['食物','烹饪','交通','建筑','体育','游戏'],
-      '动物': ['动物','哺乳','鸟类','鱼类','昆虫','宠物'],
-      '人体': ['人体','大脑','基因','细胞','免疫','神经']
-    };
-    var searchText = (title + ' ' + description + ' ' + extract).toLowerCase();
-    for (var cat in catMap) {
-      for (var i = 0; i < catMap[cat].length; i++) {
-        if (searchText.indexOf(catMap[cat][i]) !== -1) { category = cat; break; }
-      }
-      if (category !== '百科') break;
-    }
-    var source = '维基百科';
-    if (data.content_urls && data.content_urls.desktop) source = data.content_urls.desktop.page;
-    return {
-      id: 'wiki_' + Date.now(),
-      question: '你知道吗？关于「' + title + '」',
-      answer: extract,
-      category: category,
-      source: source
-    };
+    if (!silent) this.showToast('\u{1F504} \u6B63\u5728\u83B7\u53D6\u2026');
+    // Use Hitokoto API directly (Wikipedia is blocked in China)
+    self._fetchDailyWhyFromHitokoto(today, silent);
   },
   _fetchDailyWhyFromHitokoto: function(today, silent) {
     var self = this;
