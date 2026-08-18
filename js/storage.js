@@ -76,7 +76,7 @@ const Storage = {
     defaults[this.KEYS.HISTORY_TODAY] = {};
     defaults[this.KEYS.DAILY_WHY] = { seenIds: [], lastDate: '' };
     defaults[this.KEYS.WORK_HOUR] = {};
-    defaults[this.KEYS.COMP_TIME] = { balance: 0, transactions: [] };
+    defaults[this.KEYS.COMP_TIME] = { balance: 96, transactions: [{ id: 'init', date: '2026-01-01', type: 'earn', amount: 96, note: '初始调休余额', createdAt: '2026-01-01T00:00:00.000Z' }] };
     Object.entries(defaults).forEach(function(entry) {
       var key = entry[0], value = entry[1];
       if (this.cache[key] === null || this.cache[key] === undefined) {
@@ -84,6 +84,16 @@ const Storage = {
         this._save(key, value);
       }
     }.bind(this));
+    // 迁移：老用户调休余额未初始化为96h的，补上
+    var ct = this.cache[this.KEYS.COMP_TIME];
+    if (ct && (!ct.transactions || !ct.transactions.some(function(t) { return t.id === 'init'; }))) {
+      ct.transactions = ct.transactions || [];
+      ct.transactions.unshift({ id: 'init', date: '2026-01-01', type: 'earn', amount: 96, note: '初始调休余额', createdAt: '2026-01-01T00:00:00.000Z' });
+      ct.balance += 96;
+      ct.balance = Math.round(ct.balance * 10) / 10;
+      this._save(this.KEYS.COMP_TIME, ct);
+      console.log('[Storage] 迁移：补上初始调休96h，当前余额' + ct.balance + 'h');
+    }
   },
 
   _load(key) {
