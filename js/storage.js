@@ -1019,6 +1019,8 @@ const Storage = {
     data.days[date].clockOut = clockOut;
     data.days[date].note = note || '';
     data.days[date].effectiveHours = this._calcEffectiveHours(clockIn, clockOut);
+    this._autoSettleOvertime(date, data.days[date].effectiveHours);
+    data.days[date].settled = true; // 加班已即时转入调休，防止定时结算重复入账
     this._saveMonthData(ym, data);
   },
   setDirectHours: function(date, hours, note) {
@@ -1028,6 +1030,8 @@ const Storage = {
     data.days[date].directHours = parseFloat(hours);
     data.days[date].effectiveHours = parseFloat(hours);
     data.days[date].note = note || '';
+    this._autoSettleOvertime(date, data.days[date].effectiveHours);
+    data.days[date].settled = true;
     this._saveMonthData(ym, data);
   },
   toggleTripDay: function(date) {
@@ -1042,7 +1046,38 @@ const Storage = {
     var ym = date.substring(0, 7);
     var data = this.getMonthData(ym);
     delete data.days[date];
+    this._autoSettleOvertime(date, 0); // 删除记录时同步撤销该日自动转入的加班调休
     this._saveMonthData(ym, data);
+  },
+  // 加班自动转调休：保存/修改/删除记录时调用。
+  // hours > 8 的部分自动入调休余额；重复保存先撤销旧记录再按最新工时入账，避免重复计算。
+  _autoSettleOvertime: function(date, hours) {
+    var ct = this.getCompTime();
+    var changed = false;
+    var self = this;
+    // 撤销该日期已有的自动加班调休记录
+    var kept = [];
+    ct.transactions.forEach(function(t) {
+      if (t.autoDate === date) {
+        ct.balance -= (t.type === 'earn' ? t.amount : -t.amount);
+        changed = true;
+      } else {
+        kept.push(t);
+      }
+    });
+    ct.transactions = kept;
+    // 按最新工时重新入账
+    hours = parseFloat(hours) || 0;
+    if (hours > 8) {
+      var ot = Math.round((hours - 8) * 10) / 10;
+      ct.transactions.push({ id: this._genId(), date: date, autoDate: date, type: 'earn', amount: ot, note: '加班自动转调休', createdAt: this.now() });
+      ct.balance += ot;
+      changed = true;
+    }
+    if (changed) {
+      ct.balance = Math.round(ct.balance * 10) / 10;
+      this.set(this.KEYS.COMP_TIME, ct);
+    }
   },
   _calcEffectiveHours: function(clockIn, clockOut) {
     if (!clockIn || !clockOut) return 0;
@@ -1085,7 +1120,7 @@ const Storage = {
   settleDay: function(date) {
     var ym = date.substring(0, 7);
     var data = this.getMonthData(ym);
-    if (data.days[date]) {
+    if (data.days[date] && !data.days[date].settled) {
       data.days[date].settled = true;
       // Auto-earn comp time for overtime
       var hours = data.days[date].effectiveHours || 0;
