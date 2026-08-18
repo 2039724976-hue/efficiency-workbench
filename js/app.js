@@ -1003,22 +1003,25 @@ var App = {
 
     return h;
   },
-  showClockInModal: function() {
-    var today = Storage.today();
-    var ym = today.substring(0, 7);
+  showClockInModal: function(dateStr) {
+    var selDate = dateStr || Storage.today();
+    var ym = selDate.substring(0, 7);
     var summary = Storage.getMonthSummary(ym);
-    var todayRec = null;
-    summary.records.forEach(function(r) { if (r.date === today) todayRec = r.data; });
+    var rec = null;
+    summary.records.forEach(function(r) { if (r.date === selDate) rec = r.data; });
     var now = new Date();
     var nowTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     var h = '';
     h += '<div class="modal-card" style="max-width:400px;">';
     h += '<div class="modal-header"><span>\u{1F4CD} \u6253\u5361\u8BB0\u5F55</span><button class="modal-close" onclick="App.closeModal()">\u00D7</button></div>';
     h += '<div style="padding:16px;">';
-    h += '<div style="margin-bottom:12px;font-size:14px;color:#888;">\u65E5\u671F: ' + today + '</div>';
-    h += '<div class="form-group"><label>\u4E0A\u73ED\u65F6\u95F4</label><input type="time" id="clockInTime" class="form-input" value="' + (todayRec ? todayRec.clockIn : nowTime) + '"></div>';
-    h += '<div class="form-group"><label>\u4E0B\u73ED\u65F6\u95F4</label><input type="time" id="clockOutTime" class="form-input" value="' + (todayRec ? todayRec.clockOut : '') + '"></div>';
-    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="clockNote" class="form-input" placeholder="\u53EF\u9009" value="' + (todayRec ? this._esc(todayRec.note) : '') + '"></div>';
+    h += '<div class="form-group"><label>\u65E5\u671F</label><input type="date" id="clockDate" class="form-input" value="' + selDate + '" onchange="App.showClockInModal(this.value)"></div>';
+    h += '<div class="form-group"><label>\u4E0A\u73ED\u65F6\u95F4</label><input type="time" id="clockInTime" class="form-input" value="' + (rec ? rec.clockIn : nowTime) + '"></div>';
+    h += '<div class="form-group"><label>\u4E0B\u73ED\u65F6\u95F4</label><input type="time" id="clockOutTime" class="form-input" value="' + (rec ? rec.clockOut : '') + '"></div>';
+    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="clockNote" class="form-input" placeholder="\u53EF\u9009" value="' + (rec ? this._esc(rec.note) : '') + '"></div>';
+    if (rec && rec.effectiveHours > 0) {
+      h += '<div style="margin:8px 0;padding:8px 12px;background:#f5f5f5;border-radius:8px;font-size:14px;color:#888;">\u6709\u6548\u5DE5\u65F6: <b style="color:' + (rec.effectiveHours >= 8 ? '#2A8B3A' : '#C44A52') + ';">' + rec.effectiveHours + 'h</b>' + (rec.effectiveHours > 8 ? ' (\u52A0\u73ED ' + (Math.round((rec.effectiveHours - 8) * 10) / 10) + 'h)' : '') + '</div>';
+    }
     h += '<div style="display:flex;gap:8px;margin-top:16px;">';
     h += '<button class="btn btn-primary" style="flex:1;" onclick="App.saveClockIn()">\u2705 \u4FDD\u5B58</button>';
     h += '<button class="btn" style="flex:1;" onclick="App.closeModal()">\u53D6\u6D88</button>';
@@ -1027,29 +1030,29 @@ var App = {
     this.showModal(h);
   },
   saveClockIn: function() {
-    var today = Storage.today();
+    var date = document.getElementById('clockDate').value;
     var clockIn = document.getElementById('clockInTime').value;
     var clockOut = document.getElementById('clockOutTime').value;
     var note = document.getElementById('clockNote').value;
     if (!clockIn && !clockOut) { this.showToast('\u26A0\uFE0F \u8BF7\u81F3\u5C11\u586B\u5199\u4E00\u4E2A\u65F6\u95F4'); return; }
-    Storage.addClockRecord(today, clockIn, clockOut, note);
+    Storage.addClockRecord(date, clockIn, clockOut, note);
     this.closeModal();
     this.render();
-    this.showToast('\u2705 \u6253\u5361\u5DF2\u4FDD\u5B58');
+    this.showToast('\u2705 \u6253\u5361\u5DF2\u4FDD\u5B58 (' + date + ')');
   },
-  showDirectHoursModal: function() {
-    var today = Storage.today();
-    var ym = today.substring(0, 7);
+  showDirectHoursModal: function(dateStr) {
+    var selDate = dateStr || Storage.today();
+    var ym = selDate.substring(0, 7);
     var summary = Storage.getMonthSummary(ym);
-    var todayRec = null;
-    summary.records.forEach(function(r) { if (r.date === today) todayRec = r.data; });
+    var rec = null;
+    summary.records.forEach(function(r) { if (r.date === selDate) rec = r.data; });
     var h = '';
     h += '<div class="modal-card" style="max-width:400px;">';
     h += '<div class="modal-header"><span>\u{1F4DD} \u76F4\u63A5\u5F55\u5DE5\u65F6</span><button class="modal-close" onclick="App.closeModal()">\u00D7</button></div>';
     h += '<div style="padding:16px;">';
-    h += '<div style="margin-bottom:12px;font-size:14px;color:#888;">\u65E5\u671F: ' + today + '</div>';
-    h += '<div class="form-group"><label>\u5DE5\u65F6\u6570\uFF08\u5C0F\u65F6\uFF09</label><input type="number" id="directHoursInput" class="form-input" step="0.5" min="0" max="24" placeholder="\u5982: 8" value="' + (todayRec && todayRec.directHours !== null ? todayRec.directHours : '') + '"></div>';
-    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="directNote" class="form-input" placeholder="\u53EF\u9009" value="' + (todayRec ? this._esc(todayRec.note) : '') + '"></div>';
+    h += '<div class="form-group"><label>\u65E5\u671F</label><input type="date" id="directDate" class="form-input" value="' + selDate + '" onchange="App.showDirectHoursModal(this.value)"></div>';
+    h += '<div class="form-group"><label>\u5DE5\u65F6\u6570\uFF08\u5C0F\u65F6\uFF09</label><input type="number" id="directHoursInput" class="form-input" step="0.5" min="0" max="24" placeholder="\u5982: 8" value="' + (rec && rec.directHours !== null ? rec.directHours : '') + '"></div>';
+    h += '<div class="form-group"><label>\u5907\u6CE8</label><input type="text" id="directNote" class="form-input" placeholder="\u53EF\u9009" value="' + (rec ? this._esc(rec.note) : '') + '"></div>';
     h += '<div style="display:flex;gap:8px;margin-top:16px;">';
     h += '<button class="btn btn-primary" style="flex:1;" onclick="App.saveDirectHours()">\u2705 \u4FDD\u5B58</button>';
     h += '<button class="btn" style="flex:1;" onclick="App.closeModal()">\u53D6\u6D88</button>';
@@ -1058,11 +1061,11 @@ var App = {
     this.showModal(h);
   },
   saveDirectHours: function() {
-    var today = Storage.today();
+    var date = document.getElementById('directDate').value;
     var hours = document.getElementById('directHoursInput').value;
     var note = document.getElementById('directNote').value;
     if (!hours || parseFloat(hours) <= 0) { this.showToast('\u26A0\uFE0F \u8BF7\u8F93\u5165\u6709\u6548\u5DE5\u65F6'); return; }
-    Storage.setDirectHours(today, hours, note);
+    Storage.setDirectHours(date, hours, note);
     this.closeModal();
     this.render();
     this.showToast('\u2705 \u5DE5\u65F6\u5DF2\u4FDD\u5B58');
