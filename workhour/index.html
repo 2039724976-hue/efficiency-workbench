@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="工时打卡">
+  <meta name="theme-color" content="#2f7cd6">
+  <title>工时打卡</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-1024.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%232f7cd6'/%3E%3Cpath d='M50 26 v26 l18 11' stroke='white' stroke-width='9' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./css/styles.css?v=1">
+</head>
+<body>
+  <div id="app">
+    <div class="topbar">
+      <h1>⏱ 工时打卡</h1>
+      <span class="layout-badge">PC 三栏视图</span>
+      <div class="balance-chip" id="balanceChip">调休 --.-h</div>
+    </div>
+    <div class="alert-strip" id="alertStrip"></div>
+    <div class="ym-bar">
+      <button onclick="App.prevMonth()">◀</button>
+      <div class="ym-text" id="ymText">----</div>
+      <button onclick="App.nextMonth()">▶</button>
+    </div>
+    <div class="main" id="main"></div>
+  </div>
+  <div class="modal-mask" id="modalMask" style="display:none;">
+    <div class="modal" id="modalBox"></div>
+  </div>
+  <div id="toast"></div>
+  <script src="./js/workhour-core.js?v=1"></script>
+  <script src="./js/seed.js?v=1"></script>
+  <script src="./js/db.js?v=1"></script>
+  <script src="./js/app.js?v=1"></script>
+</body>
+</html>
