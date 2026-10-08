@@ -233,7 +233,7 @@ var WHDB = (function () {
   function fail(msg, extra) { return extra ? Object.assign({ code: 1, msg: msg }, extra) : { code: 1, msg: msg }; }
 
   var api = {
-    'GET /api/state': function (q) { return ok(monthState(q.ym || Core.todayStr().substring(0, 7))); },
+    'GET /api/state': function (b, q) { return ok(monthState(q.ym || Core.todayStr().substring(0, 7))); },
     'GET /api/balance': function () { return ok({ balance: balance() }); },
 
     'POST /api/punch': function (b) {
@@ -419,7 +419,7 @@ var WHDB = (function () {
       persist();
       return ok(monthState(ym), '已更新应出勤天数');
     },
-    'GET /api/export': function (q) {
+    'GET /api/export': function (b, q) {
       var ym = (q.ym || Core.todayStr()).substring(0, 7);
       var st = monthState(ym);
       var L = [];
